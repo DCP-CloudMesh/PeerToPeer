@@ -2,7 +2,7 @@
 #define _PROVIDER_H_
 
 #include "peer.h"
-#include "task_request.h"
+#include "../RequestResponse/task_request.h"
 
 class Provider : public Peer {
     bool isBusy;

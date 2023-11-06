@@ -14,6 +14,7 @@ class BootstrapNode {
 public:
     BootstrapNode(std::string, unsigned short);
     ~BootstrapNode();
+    
     void listen_for_requests();
     void discovery();
 };

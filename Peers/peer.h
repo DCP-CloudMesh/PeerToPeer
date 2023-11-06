@@ -5,7 +5,7 @@
 #include <string>
 #include <boost/asio/ip/address.hpp>
 
-#include "utility.cpp"
+#include "../utility.cpp"
 
 class Peer {
     std::string uuid;
@@ -16,6 +16,6 @@ class Peer {
 public:
     Peer(std::string, unsigned short);
     virtual ~Peer() = 0;
-}
+};
 
 #endif // _PEER_H
