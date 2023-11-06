@@ -14,7 +14,8 @@ class Peer {
     std::unordered_map<std::string, boost::asio::ip::address> providerPeers;
     
 public:
-    Peer(string, unsigned short) = 0;
+    Peer(std::string, unsigned short);
+    virtual ~Peer() = 0;
 }
 
 #endif // _PEER_H
