@@ -2,8 +2,15 @@
 #include <iostream>
 // #include "Peers/provider.h"
 // #include "Peers/requester.h"
+#include "utility.cpp"
+
+using namespace std;
+
+
+
 
 int main(int argc, char* argv[]) {
+    cout << getPublicIPAddr() << endl;
 
     #if defined( PROVIDER )
     std::cout << "Running as provider." << std::endl;
