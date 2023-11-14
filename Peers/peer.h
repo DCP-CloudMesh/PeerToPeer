@@ -1,21 +1,25 @@
 #ifndef _PEER_H
 #define _PEER_H
 
-#include <unordered_map>
 #include <string>
-#include <boost/asio/ip/address.hpp>
+#include <unordered_map>
 
 #include "../utility.cpp"
 
+
+
 class Peer {
     std::string uuid;
-    boost::asio::ip::address ipAddress;
+    std::string ipAddress;
     unsigned short port;
-    std::unordered_map<std::string, boost::asio::ip::address> providerPeers;
-    
-public:
-    Peer(std::string, unsigned short);
-    virtual ~Peer() = 0;
+
+   protected:
+    // maps uuid to ip address
+    std::unordered_map<std::string, std::string> providerPeers;
+
+   public:
+    Peer(std::string uuid, std::string ipAddress, unsigned short port);
+    virtual ~Peer();
 };
 
-#endif // _PEER_H
+#endif  // _PEER_H
