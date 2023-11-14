@@ -8,8 +8,10 @@ class Provider : public Peer {
     bool isBusy;
     TaskRequest task;
     bool isLocalBootstrap;
+    string getPublicIPAddr();
 
 public:
+    
     Provider();
 }
 
