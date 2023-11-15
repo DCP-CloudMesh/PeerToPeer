@@ -3,7 +3,7 @@
 
 #include <string>
 
-class BootstrapNode {     
+class BootstrapNode {
     // if inherited from peer, eliminate:
     std::string uuid;
     boost::asio::ip::address ipAddress;
@@ -11,10 +11,10 @@ class BootstrapNode {
     std::unordered_map<std::string, boost::asio::ip::address> providerPeers;
     // end if inherited from peer
 
-public:
+  public:
     BootstrapNode(std::string, unsigned short);
     ~BootstrapNode();
-    
+
     void listen_for_requests();
     void discovery();
 };

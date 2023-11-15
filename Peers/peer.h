@@ -10,13 +10,13 @@ class Peer {
     std::string uuid;
     IpAddress ipAddress;
 
-   protected:
+  protected:
     // maps uuid to ip address
     std::unordered_map<std::string, IpAddress> providerPeers;
 
-   public:
+  public:
     Peer(std::string uuid, std::string ipAddress, unsigned short port);
     virtual ~Peer();
 };
 
-#endif  // _PEER_H
+#endif // _PEER_H

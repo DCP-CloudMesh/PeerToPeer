@@ -1,8 +1,8 @@
 #ifndef _PROVIDER_H_
 #define _PROVIDER_H_
 
-#include "peer.h"
 #include "../RequestResponse/task_request.h"
+#include "peer.h"
 
 class Provider : public Peer {
     bool isBusy;
@@ -10,8 +10,7 @@ class Provider : public Peer {
     bool isLocalBootstrap;
     string getPublicIPAddr();
 
-public:
-    
+  public:
     Provider();
 }
 

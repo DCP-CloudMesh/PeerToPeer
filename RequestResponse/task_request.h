@@ -6,7 +6,7 @@
 class TaskRequest {
   public:
     std::string leaderUuid;
-    // PARTIITONED TRAINING DATA 
+    // PARTIITONED TRAINING DATA
     std::unordered_set<std::string> assignedPeers;
 };
 

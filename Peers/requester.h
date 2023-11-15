@@ -7,7 +7,7 @@
 class Requester : protected Peer {
     TaskRequest request;
 
-   public:
+  public:
     Requester(std::string, std::string, unsigned short);
     virtual ~Requester() noexcept;
     void set_task_request(TaskRequest);
@@ -15,4 +15,4 @@ class Requester : protected Peer {
     void send_task_request();
 };
 
-#endif  // _REQUESTER_H_
+#endif // _REQUESTER_H_

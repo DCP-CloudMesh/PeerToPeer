@@ -1,12 +1,13 @@
 #ifndef _SERVER_H
 #define _SERVER_H
 
-#include <iostream>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
 #include <cstdlib>
 #include <cstring>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include <iostream>
 
 class Server {
     const char* HOST;

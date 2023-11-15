@@ -14,6 +14,4 @@ struct DiscoveryResponse {
     std::unordered_map<std::string, boost::asio::ip::address> providerPeers;
 };
 
-
-
-#endif 
+#endif
