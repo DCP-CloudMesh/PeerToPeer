@@ -1,21 +1,23 @@
 #ifndef _PEER_H
 #define _PEER_H
 
+#include "../Networking/Client/client.h"
+#include "../Networking/Server/server.h"
+
+#include "../utility.cpp"
 #include <string>
 #include <unordered_map>
 
-#include "../utility.cpp"
-
 class Peer {
-    std::string uuid;
-    IpAddress ipAddress;
+    Server server;
+    Client client;
 
   protected:
     // maps uuid to ip address
     std::unordered_map<std::string, IpAddress> providerPeers;
 
   public:
-    Peer(std::string uuid, std::string ipAddress, unsigned short port);
+    Peer(Server, Client);
     virtual ~Peer();
 };
 

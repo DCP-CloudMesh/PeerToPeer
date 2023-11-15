@@ -1,12 +1,12 @@
 CC=g++
 CFLAGS=-c -Wall
 
-SOURCES=peer.cpp provider.cpp requester.cpp server.cpp
+SOURCES=Peer/peer.cpp Provider/provider.cpp Requester/requester.cpp ../Server/server.cpp
 
 PEER_OBJECTS=$(filter peer.o, $(SOURCES:.cpp=.o))
 PROVIDER_OBJECTS=$(filter provider.o, $(SOURCES:.cpp=.o))
 REQUESTER_OBJECTS=$(filter requester.o, $(SOURCES:.cpp=.o))
-SERVER_OBJECTS=$(filter server.o, $(SOURCES:.cpp=.o))
+# SERVER_OBJECTS=$(filter server.o, $(SOURCES:.cpp=.o))
 
 PROVIDER_EXECUTABLE=provider.out
 REQUESTER_EXECUTABLE=requester.out
