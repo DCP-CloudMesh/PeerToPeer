@@ -14,8 +14,8 @@ PROVIDER_OBJS = $(PROVIDER_SRCS:.cc=.o)
 REQUESTER_OBJS = $(REQUESTER_SRCS:.cc=.o)
 
 # Output binary names
-PROVIDER_EXEC = provider
-REQUESTER_EXEC = requester
+PROVIDER_EXEC = provider.out
+REQUESTER_EXEC = requester.out
 
 all: $(PROVIDER_EXEC) $(REQUESTER_EXEC)
 
