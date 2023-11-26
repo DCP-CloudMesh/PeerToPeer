@@ -1,4 +1,5 @@
 .vscode
-.o
+*.o
 .out
 .d
+.env

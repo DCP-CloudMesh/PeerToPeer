@@ -1,67 +1,76 @@
 #include "client.h"
 
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include <cstring>
+#include <iostream>
+
 using namespace std;
 
-Client::Client() {}
+Client::Client() : CONN{-1} {}
 
 Client::~Client() {}
 
 int Client::setUpConn(const char* HOST, const char* PORT, const char* TYPE) {
-    addrinfo hints, *serverInfo;
+  addrinfo hints, *serverInfo;
 
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
+  memset(&hints, 0, sizeof hints);
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
 
-    if (getaddrinfo(HOST, PORT, &hints, &serverInfo) != 0) {
-        std::cerr << "Error getting address info: " << gai_strerror(errno) << std::endl;
-        return 1;
+  if (getaddrinfo(HOST, PORT, &hints, &serverInfo) != 0) {
+    std::cerr << "Error getting address info: " << gai_strerror(errno)
+              << std::endl;
+    return 1;
+  }
+
+  for (auto addr = serverInfo; addr != nullptr; addr = addr->ai_next) {
+    CONN = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+    if (CONN == -1) {
+      std::cerr << "Error creating socket: " << strerror(errno) << std::endl;
+      continue;
     }
 
-    int connection = -1;
-    for (auto addr = serverInfo; addr != nullptr; addr = addr->ai_next) {
-        connection = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-        if (connection == -1) {
-            std::cerr << "Error creating socket: " << strerror(errno) << std::endl;
-            continue;
-        }
-
-        if (connect(connection, addr->ai_addr, addr->ai_addrlen) == -1) {
-            std::cerr << "Error connecting: " << strerror(errno) << std::endl;
-            close(connection);
-            connection = -1;
-            continue;
-        }
-
-        // If we reached here, the connection was successful
-        break;
+    if (connect(CONN, addr->ai_addr, addr->ai_addrlen) == -1) {
+      std::cerr << "Error connecting: " << strerror(errno) << std::endl;
+      close(CONN);
+      CONN = -1;
+      continue;
     }
 
-    freeaddrinfo(serverInfo);
+    // If we reached here, the CONN was successful
+    break;
+  }
 
-    if (connection == -1) {
-        return -1;
-    }
-    return 0;
+  freeaddrinfo(serverInfo);
+
+  if (CONN == -1) {
+    return -1;
+  }
+  return 0;
 }
 
-void Client::request() {
-    const char* data = "Hello Server! Greetings.";
-    if (send(connection, data, strlen(data), 0) == -1) {
-        cerr << "Error sending: " << strerror(errno) << endl;
-        close(connection);
-        return 1;
-    }
+int Client::request(const char* data) {
+//   const char* data = "Hello Server! Greetings.";
+  if (send(CONN, data, strlen(data), 0) == -1) {
+    cerr << "Error sending: " << strerror(errno) << endl;
+    close(CONN);
+    return 1;
+  }
 
-    char buffer[1024];
-    ssize_t mLen = recv(connection, buffer, sizeof(buffer), 0);
-    if (mLen < 0) {
-        cerr << "Error reading: " << strerror(errno) << endl;
-        close(connection);
-        return 1;
-    }
-    cout << "Received: " << string(buffer, mLen) << endl;
+  char buffer[1024];
+  ssize_t mLen = recv(CONN, buffer, sizeof(buffer), 0);
+  if (mLen < 0) {
+    cerr << "Error reading: " << strerror(errno) << endl;
+    close(CONN);
+    return 1;
+  }
+  cout << "Received: " << string(buffer, mLen) << endl;
 
-    close(connection);
-
+  close(CONN);
+  return 0;
 }

@@ -1,17 +1,17 @@
 TYPE := PROVIDER
 
-CXX = g++
-CXXFLAGS = -Wall -D"${TYPE}"
+CXX = g++ 
+CXXFLAGS = -std=c++17 -Wall -D"${TYPE}"
 
 # List of source files
-COMMON_SRCS = main.cc 
-PROVIDER_SRCS = 
-REQUESTER_SRCS = 
+COMMON_SRCS = main.cpp Networking/Server/server.cpp Networking/Client/client.cpp Peers/Peer/peer.cpp
+PROVIDER_SRCS =  Peers/Provider/provider.cpp  
+REQUESTER_SRCS = Peers/Peer/peer
 
 # Object files for the common code and each executable
-COMMON_OBJS = $(COMMON_SRCS:.cc=.o)
-PROVIDER_OBJS = $(PROVIDER_SRCS:.cc=.o)
-REQUESTER_OBJS = $(REQUESTER_SRCS:.cc=.o)
+COMMON_OBJS = $(COMMON_SRCS:.cpp=.o)
+PROVIDER_OBJS = $(PROVIDER_SRCS:.cpp=.o)
+REQUESTER_OBJS = $(REQUESTER_SRCS:.cpp=.o)
 
 # Output binary names
 PROVIDER_EXEC = provider.out

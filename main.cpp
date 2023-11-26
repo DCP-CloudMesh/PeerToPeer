@@ -1,16 +1,20 @@
 
 #include <iostream>
 // #includNetworking/u "Peers/provider.h"
+#include "Peers/Provider/provider.h"
 // #include "Peers/requester.h"
-#include "Networking/utility.cpp"
-#include "utility.cpp"
+// #include "Networking/utility.cpp"
+// #include "utility.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    cout << getPublicIPAddr() << endl;
+    // cout << startNgrokForwarding(8181) << endl;
 
 #if defined(PROVIDER)
+    const char* host = "";
+    const char* port = "8080";
+    Provider p = Provider(host, port);
     std::cout << "Running as provider." << std::endl;
 // Provider provider;
 // provider.run();

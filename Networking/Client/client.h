@@ -2,11 +2,12 @@
 #define _CLIENT_H
 
 class Client {
+  int CONN;
   public:
     Client();
-    virtual ~Client();
+    ~Client();
     int setUpConn(const char* HOST, const char* PORT, const char* TYPE);
-    void request():
+    int request(const char* data);
 };
 
 #endif // _CLIENT_H
