@@ -3,7 +3,6 @@
 
 #include <string>
 #include <unordered_map>
-#include <boost/asio.hpp>
 
 class BootstrapNode {
     // if inherited from peer, eliminate:
