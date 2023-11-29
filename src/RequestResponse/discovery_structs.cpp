@@ -2,7 +2,7 @@
 
 std::string serializeDiscoveryRequest(const DiscoveryRequest& request) {
     std::string serializedData = request.req_uuid + "|" +
-                                 request.req_ipAddress.to_string() + "|" +
+                                 request.req_ipAddress + "|" +
                                  std::to_string(request.req_port) + "|" +
                                  std::to_string(request.peers_requested);
     return serializedData;
@@ -22,8 +22,7 @@ deserializeDiscoveryRequest(const std::string& serializedData) {
             request.req_uuid = token;
             break;
         case 1:
-            request.req_ipAddress =
-                boost::asio::ip::address_v4::from_string(token);
+            request.req_ipAddress = token;
             break;
         case 2:
             request.req_port = std::stoi(token);

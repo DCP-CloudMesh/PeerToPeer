@@ -7,9 +7,9 @@
 class BootstrapNode {
     // if inherited from peer, eliminate:
     std::string uuid;
-    boost::asio::ip::address ipAddress;
+    std::string ipAddress;
     unsigned short port;
-    std::unordered_map<std::string, boost::asio::ip::address> providerPeers;
+    std::unordered_map<std::string, std::string> providerPeers;
     // end if inherited from peer
 
   public:
