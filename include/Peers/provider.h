@@ -1,10 +1,10 @@
 #ifndef _PROVIDER_H_
 #define _PROVIDER_H_
 
-#include "../../RequestResponse/task_request.h"
-#include "../Peer/peer.h"
-#include "../../Networking/Client/client.h"
-#include "../../Networking/Server/server.h"
+#include "../RequestResponse/task_request.h"
+#include "peer.h"
+#include "../Networking/client.h"
+#include "../Networking/server.h"
 
 class Provider : public Peer {
     bool isBusy;

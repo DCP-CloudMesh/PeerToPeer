@@ -4,9 +4,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "../../utility.h"
-#include "../../Networking/Client/client.h"
-#include "../../Networking/Server/server.h"
+#include "../utility.h"
+#include "../Networking/client.h"
+#include "../Networking/server.h"
 
 // struct IpAddress;
 

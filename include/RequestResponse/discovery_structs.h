@@ -2,6 +2,8 @@
 #define _DISCOVERY_
 
 #include <string>
+#include <unordered_map>
+#include <boost/asio.hpp>
 
 struct DiscoveryRequest {
     std::string req_uuid;

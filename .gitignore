@@ -3,3 +3,5 @@
 .out
 .d
 .env
+main
+build

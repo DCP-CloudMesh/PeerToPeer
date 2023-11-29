@@ -1,7 +1,7 @@
-#include "requester.h"
+#include "../../include/Peers/requester.h"
 using namespace std;
 
-Requester::Requester(Server server, Client client) : Peer(server, client) {}
+Requester::Requester(const char* host, const char* port) : Peer(host, port) {}
 
 Requester::~Requester() {
     // additional code here
@@ -14,9 +14,9 @@ void Requester::send_discovery_request() {
 }
 
 void Requester::send_task_request() {
-    for (const auto& peer : providerPeers) {
+    // for (const auto& peer : providerPeers) {
         
-    }
+    // }
 }
 
 void Requester::check_status() {}
