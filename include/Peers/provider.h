@@ -3,6 +3,8 @@
 
 #include "../RequestResponse/task_request.h"
 #include "peer.h"
+#include "../Networking/client.h"
+#include "../Networking/server.h"
 
 class Provider : public Peer {
     bool isBusy;
@@ -11,7 +13,7 @@ class Provider : public Peer {
     std::string getPublicIPAddr();
 
   public:
-    Provider(Server, Client);
+    Provider(const char* host, const char* port);
 };
 
 #endif

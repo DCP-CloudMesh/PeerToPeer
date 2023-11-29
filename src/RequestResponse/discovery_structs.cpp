@@ -1,10 +1,11 @@
-#include "discovery_structs.h"
+#include "../../include/RequestResponse/discovery_structs.h"
 
 std::string serializeDiscoveryRequest(const DiscoveryRequest& request) {
     std::string serializedData = request.req_uuid + "|" +
                                  request.req_ipAddress.to_string() + "|" +
                                  std::to_string(request.req_port) + "|" +
                                  std::to_string(request.peers_requested);
+    return serializedData;
 }
 
 DiscoveryRequest

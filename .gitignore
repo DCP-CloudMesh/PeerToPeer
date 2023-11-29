@@ -1,4 +1,7 @@
 .vscode
-.o
+*.o
 .out
 .d
+.env
+main
+build

@@ -2,6 +2,8 @@
 #define _BOOTSTRAP_NODE_H
 
 #include <string>
+#include <unordered_map>
+#include <boost/asio.hpp>
 
 class BootstrapNode {
     // if inherited from peer, eliminate:
@@ -19,4 +21,4 @@ class BootstrapNode {
     void discovery();
 };
 
-#endif _BOOTSTRAP_NODE_H
+#endif // _BOOTSTRAP_NODE_H
