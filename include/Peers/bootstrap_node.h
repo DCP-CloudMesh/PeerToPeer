@@ -26,6 +26,7 @@ class BootstrapNode {
 
     std::string getLeaderIpAddress();
     unsigned short getLeaderPort();
+    std::string BootstrapNode::getLeaderUuid();
 
     std::string getFollowerIpAddress();
     unsigned short getFollowerPort();
