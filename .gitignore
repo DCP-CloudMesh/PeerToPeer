@@ -1,7 +1,12 @@
 .vscode
+.venv
 *.o
 .out
 .d
 .env
-main
 build
+
+# executables
+main
+client
+prod
