@@ -67,7 +67,7 @@ string Server::receiveFromConn() {
     if (mLen < 0) {
         cerr << "Error reading: " << strerror(errno) << endl;
     }
-    cout << "Received: " << string(buffer, mLen) << endl;
+    cout << "Server Received: " << string(buffer, mLen) << endl;
     return string(buffer, mLen);
 }
 

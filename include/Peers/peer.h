@@ -7,6 +7,7 @@
 #include "../Networking/client.h"
 #include "../Networking/server.h"
 #include "../utility.h"
+#include "bootstrap_node.h"
 
 class Peer {
   protected:
@@ -19,6 +20,8 @@ class Peer {
     // maps uuid to ip address
     std::unordered_map<std::string, IpAddress> providerPeers;
     IpAddress leaderIP;
+
+    BootstrapNode bootstrapNode;
 
   public:
     Peer();

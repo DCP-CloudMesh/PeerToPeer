@@ -3,7 +3,7 @@
 using namespace std;
 
 Requester::Requester(unsigned short port) : Peer() {
-    // setupServer("", to_string(port).c_str());
+    setupServer("", to_string(port).c_str());
 }
 
 Requester::~Requester() noexcept {}
@@ -15,15 +15,17 @@ void Requester::set_task_request(TaskRequest request_) {
 
 void Requester::send_discovery_request() {
     // update the member hash map
-    leaderIP = IpAddress{"8.tcp.ngrok.io", 13299};
+    leaderIP = IpAddress{bootstrapNode.getLeaderIpAddress(),
+                         bootstrapNode.getLeaderPort()};
 
     // add the follower peers
-    providerPeers.insert({"1", IpAddress{"8.tcp.ngrok.io", 13299}});
+    // providerPeers.insert({"1", IpAddress{"8.tcp.ngrok.io", 13299}});
 }
 
 void Requester::divide_task() {
     // divide the large task into subtasks
-    // divide "[2, 1, 4, 3, 6, 5, 9, 7, 8, 10]" into as many subtasks as there
+    // divide "[2, 1, 4, 3, 6, 5, 9, 7, 8, 10]" into as many subtasks as
+    // there
 
     // parse string array as vector
     vector<int> trainingData = taskRequests[0].getTrainingData();

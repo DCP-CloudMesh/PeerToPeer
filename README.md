@@ -2,6 +2,8 @@
 
 To compile, run the following commands:
 **Provider**
-`make provider`
+`make TYPE=PROVIDER TARGET=server`
 **Requestor**
-`make requestor`
+`make TYPE=REQUESTER TARGET=client`
+
+

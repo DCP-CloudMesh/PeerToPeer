@@ -72,7 +72,7 @@ int Client::sendRequest(const char* data) {
         close(CONN);
         return 1;
     }
-    cout << "Received: " << string(buffer, mLen) << endl;
+    cout << "Client Received: " << string(buffer, mLen) << endl;
     close(CONN);
     return 0;
 }

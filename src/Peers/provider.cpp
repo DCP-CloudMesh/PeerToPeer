@@ -20,18 +20,19 @@ void Provider::listen() {
         if (connStatus) {
             // receive task request object from client
             string msg = server->receiveFromConn();
-            server->replyToConn("Received task request.");
+            server->replyToConn("Received task request.\n");
 
             // process this workload, first deserialize into a task
             task->deserialize(msg);
             server->replyToConn(
-                "Deserialized task request. Now processing workload");
+                "Deserialized task request. Now processing workload.\n");
             server->closeConn();
 
             // Run processWorkload() in a separate thread
             thread workloadThread(&Provider::processWorkload, this);
 
             if (task->getLeaderUuid() == uuid) {
+                cout << "I am the leader." << endl;
                 // if this is the leader, send the result to the requester
                 // send back the result
                 vector<vector<int>> followerData;
@@ -63,6 +64,7 @@ void Provider::listen() {
                 client->setUpConn(host, port, "tcp");
                 client->sendRequest(aggregatedResults.serialize().c_str());
             } else {
+                cout << "I am a follower." << endl;
                 // if this is a follower, send the result to the leader
                 // send back the result
 
