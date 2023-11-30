@@ -6,12 +6,15 @@
 #include "../RequestResponse/task_response.h"
 #include "../utility.h"
 #include "peer.h"
+#include <sstream>
+#include <vector>
 
 class Requester : protected Peer {
-    std::string serializedRequest;
+    std::vector<TaskRequest> taskRequests;
+    void divide_task();
 
   public:
-    Requester();
+    Requester(unsigned short port);
     ~Requester() noexcept;
     void set_task_request(TaskRequest taskRequest);
     void send_task_request();

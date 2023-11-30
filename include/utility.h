@@ -21,4 +21,6 @@ std::string generate_uuid_v4();
 
 std::string startNgrokForwarding(unsigned short port);
 
+std::string vectorToString(std::vector<int> v);
+
 #endif // __UTILITY__

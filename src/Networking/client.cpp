@@ -26,7 +26,7 @@ int Client::setUpConn(const char* HOST, const char* PORT, const char* TYPE) {
                       << std::endl;
             continue;
         }
-        
+
         if (connect(CONN, addr->ai_addr, addr->ai_addrlen) == -1) {
             std::cerr << "Error connecting: " << strerror(errno) << std::endl;
             close(CONN);
@@ -48,9 +48,19 @@ int Client::setUpConn(const char* HOST, const char* PORT, const char* TYPE) {
 }
 
 int Client::sendRequest(const char* data) {
-    // data = "Hello Server! Greetings.";
-    if (send(CONN, data, strlen(data), 0) == -1) {
-        cerr << "Error sending: " << strerror(errno) << endl;
+    // retry if failed 5 times
+    bool sent = false;
+    for (int i = 0; i < 5; i++) {
+        if (send(CONN, data, strlen(data), 0) == -1) {
+            cerr << "Retrying sending request..." << endl;
+        } else {
+            sent = true;
+            break;
+        }
+    }
+
+    if (!sent) {
+        cerr << "Error sending request: " << strerror(errno) << endl;
         close(CONN);
         return 1;
     }
@@ -63,7 +73,6 @@ int Client::sendRequest(const char* data) {
         return 1;
     }
     cout << "Received: " << string(buffer, mLen) << endl;
-
     close(CONN);
     return 0;
 }

@@ -16,8 +16,17 @@ class BootstrapNode {
     BootstrapNode(std::string, unsigned short);
     ~BootstrapNode();
 
-    void listen_for_requests();
+    void listenForRequests();
     void discovery();
+
+    std::string getServerIpAddress();
+    unsigned short getServerPort();
+
+    std::string getLeaderIpAddress();
+    unsigned short getLeaderPort();
+
+    std::string getFollowerIpAddress();
+    unsigned short getFollowerPort();
 };
 
 #endif // _BOOTSTRAP_NODE_H

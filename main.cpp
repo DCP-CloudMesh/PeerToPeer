@@ -8,19 +8,26 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     // const char* host = "";
-    const char* port = "8080";
+    unsigned short port = 8080;
+    vector<int> trainingData{2, 1, 4, 3, 6, 5, 9, 7, 8, 10};
 
 #if defined(PROVIDER)
-    std::cout << "Running as provider." << std::endl;
-    Provider p = Provider(atoi(port));
+    std::cout << "Running as provider on port " << port << "." << std::endl;
+    Provider p = Provider(port);
     p.listen();
 #elif defined(REQUESTER)
     std::cout << "Running as requester." << std::endl;
-    Requester r = Requester();
-    r.set_task_request(TaskRequest("test", unordered_set<string>({"test"})));
+    Requester r = Requester(port);
+    TaskRequest request = TaskRequest(trainingData);
+    r.set_task_request(request);
+
+    // sets the leaderIP and providerPeers
     r.send_discovery_request();
+
+    // sends the task request to the leader and provider peers
     r.send_task_request();
     std::cout << "Sent task request." << std::endl;
+
 #else
     std::cout << "Please specify either --provider or --requester flag."
               << std::endl;

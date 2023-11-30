@@ -15,7 +15,8 @@ void Server::setupServer() {
     unsigned short port = std::stoi(response.substr(ip.length() + 1));
     publicIP = IpAddress{ip, port};
 
-    cout << "Server Running on " << ip << ". Port: " << port << endl;
+    cout << "Initializing server on " << publicIP.ipAddress << ":"
+         << publicIP.port << endl;
 
     server = socket(AF_INET, SOCK_STREAM, 0);
     if (server == -1) {
@@ -41,38 +42,38 @@ void Server::setupServer() {
         exit(1);
     }
 
-    cout << "Waiting for client..." << endl;
+    cout << "Server initialized" << endl;
 }
 
-void Server::acceptConn() {
-    while (true) {
-        sockaddr_in clientAddr;
-        socklen_t clientAddrLen = sizeof(clientAddr);
-        int connection =
-            accept(server, (struct sockaddr*)&clientAddr, &clientAddrLen);
+bool Server::acceptConn() {
+    sockaddr_in clientAddr;
+    socklen_t clientAddrLen = sizeof(clientAddr);
+    cout << "Waiting for client to connect..." << endl;
+    activeConn = accept(server, (struct sockaddr*)&clientAddr, &clientAddrLen);
 
-        if (connection == -1) {
-            cerr << "Error accepting: " << strerror(errno) << endl;
-            close(server);
-            exit(1);
-        }
-
-        cout << "Client connected" << endl;
-        processClient(connection);
+    if (activeConn == -1) {
+        cerr << "Error accepting: " << strerror(errno) << endl;
+        close(server);
+        return false;
     }
+
+    cout << "Client connected" << endl;
+    return true;
 }
 
-void Server::processClient(int connection) {
+string Server::receiveFromConn() {
     char buffer[1024];
-    ssize_t mLen = recv(connection, buffer, sizeof(buffer), 0);
+    ssize_t mLen = recv(activeConn, buffer, sizeof(buffer), 0);
     if (mLen < 0) {
         cerr << "Error reading: " << strerror(errno) << endl;
     }
     cout << "Received: " << string(buffer, mLen) << endl;
-
-    const char* response = "Thanks! Got your message:";
-    send(connection, response, strlen(response), 0);
-    send(connection, buffer, mLen, 0);
-
-    close(connection);
+    return string(buffer, mLen);
 }
+
+void Server::replyToConn(string message) {
+    const char* reply = message.c_str();
+    send(activeConn, reply, strlen(reply), 0);
+}
+
+void Server::closeConn() { close(activeConn); }
