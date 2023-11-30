@@ -21,12 +21,16 @@ void Provider::listen() {
             // receive task request object from client
             string msg = server->receiveFromConn();
             server->replyToConn("Received task request.\n");
+            cout << "Received message: \n" << msg << endl;
 
             // process this workload, first deserialize into a task
             task->deserialize(msg);
             server->replyToConn(
                 "Deserialized task request. Now processing workload.\n");
             server->closeConn();
+
+            // print deserialized task ------------ REMOVE AFTER
+            // cout << "Task request: " << task->serialize() << endl;
 
             // Run processWorkload() in a separate thread
             thread workloadThread(&Provider::processWorkload, this);
@@ -73,7 +77,6 @@ void Provider::listen() {
                 const char* host = "8.tcp.ngrok.io";
                 const char* port = "13299";
                 client->setUpConn(host, port, "tcp");
-
                 client->sendRequest(task->serialize().c_str());
             }
         }

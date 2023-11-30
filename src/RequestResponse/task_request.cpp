@@ -50,7 +50,7 @@ void TaskRequest::deserialize(string msg) {
     // AssignedPeers
     ss.ignore(numeric_limits<streamsize>::max(), ':');
     string peer;
-    while (ss >> peer) {
+    while (getline(ss, peer, ' ')) {
         assignedPeers.insert(peer);
     }
 
