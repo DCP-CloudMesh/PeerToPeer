@@ -5,6 +5,7 @@
 #include "../Networking/server.h"
 #include "../RequestResponse/task_request.h"
 #include "peer.h"
+#include <memory>
 
 class Provider : public Peer {
     bool isBusy;
