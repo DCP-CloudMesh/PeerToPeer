@@ -26,7 +26,7 @@ int Client::setUpConn(const char* HOST, const char* PORT, const char* TYPE) {
                       << std::endl;
             continue;
         }
-
+        
         if (connect(CONN, addr->ai_addr, addr->ai_addrlen) == -1) {
             std::cerr << "Error connecting: " << strerror(errno) << std::endl;
             close(CONN);
@@ -35,6 +35,7 @@ int Client::setUpConn(const char* HOST, const char* PORT, const char* TYPE) {
         }
 
         // If we reached here, the CONN was successful
+        std::cout << "Connection successful." << std::endl;
         break;
     }
 
@@ -46,9 +47,9 @@ int Client::setUpConn(const char* HOST, const char* PORT, const char* TYPE) {
     return 0;
 }
 
-int Client::send(const char* data) {
-    //   const char* data = "Hello Server! Greetings.";
-    if (::send(CONN, data, strlen(data), 0) == -1) {
+int Client::sendRequest(const char* data) {
+    // data = "Hello Server! Greetings.";
+    if (send(CONN, data, strlen(data), 0) == -1) {
         cerr << "Error sending: " << strerror(errno) << endl;
         close(CONN);
         return 1;

@@ -2,7 +2,9 @@
 
 using namespace std;
 
-Requester::Requester() : Peer() { setupServer("", "8080"); }
+Requester::Requester() : Peer() { 
+    // setupServer("", "8080"); 
+}
 
 Requester::~Requester() noexcept {}
 
@@ -13,7 +15,7 @@ void Requester::set_task_request(TaskRequest request_) {
 void Requester::send_discovery_request() {
     // update the member hash map
 
-    leaderIP = IpAddress{"tcp://0.tcp.ngrok.io", 14076};
+    leaderIP = IpAddress{"0.tcp.ngrok.io", 10904};
 }
 
 void Requester::send_task_request() {
@@ -22,7 +24,7 @@ void Requester::send_task_request() {
     const char* host = leaderIP.ipAddress.c_str();
     const char* port = std::to_string(leaderIP.port).c_str();
     client->setUpConn(host, port, "tcp");
-    client->send(serializedRequest.c_str());
+    client->sendRequest(serializedRequest.c_str());
 }
 
 void Requester::check_status() {}

@@ -16,7 +16,7 @@ class Client {
     Client();
     ~Client();
     int setUpConn(const char* HOST, const char* PORT, const char* TYPE);
-    int send(const char* data);
+    int sendRequest(const char* data);
 };
 
 #endif // _CLIENT_H

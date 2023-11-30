@@ -32,7 +32,8 @@ std::string startNgrokForwarding(unsigned short port) {
         "python3 ./src/Networking/ngrok_ip.py " + std::to_string(port);
 
     // start ngrok
-    std::system("./src/Networking/ngrok_restart.sh 8181 &");
+    std::string ngrok_restart = "./src/Networking/ngrok_restart.sh " + std::to_string(port) + " &";
+    std::system(ngrok_restart.c_str());
 
     // Open a pipe to capture the output
     FILE* pipe = popen(command.c_str(), "r");
