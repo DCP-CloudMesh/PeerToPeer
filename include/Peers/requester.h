@@ -9,13 +9,13 @@
 
 class Requester : protected Peer {
     std::string serializedRequest;
-    void send_discovery_request();
 
   public:
     Requester();
     ~Requester() noexcept;
     void set_task_request(TaskRequest taskRequest);
     void send_task_request();
+    void send_discovery_request();
     void check_status();
     TaskResponse get_results();
 };
