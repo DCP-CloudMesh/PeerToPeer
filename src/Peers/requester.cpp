@@ -18,6 +18,8 @@ void Requester::send_discovery_request() {
     leaderIP = IpAddress{bootstrapNode.getLeaderIpAddress(),
                          bootstrapNode.getLeaderPort()};
 
+    taskRequests[0].setLeaderUuid(bootstrapNode.getLeaderUuid());
+    
     // add the follower peers
     // providerPeers.insert({"1", IpAddress{"8.tcp.ngrok.io", 13299}});
 }
