@@ -1,19 +1,20 @@
 #ifndef _PROVIDER_H_
 #define _PROVIDER_H_
 
-#include "../RequestResponse/task_request.h"
-#include "peer.h"
 #include "../Networking/client.h"
 #include "../Networking/server.h"
+#include "../RequestResponse/task_request.h"
+#include "peer.h"
 
 class Provider : public Peer {
     bool isBusy;
-    TaskRequest task;
+    std::unique_ptr<TaskRequest> task;
     bool isLocalBootstrap;
     std::string getPublicIPAddr();
 
   public:
-    Provider(const char* host, const char* port);
+    Provider(unsigned short port);
+    void listen();
 };
 
 #endif

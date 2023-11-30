@@ -4,24 +4,25 @@
 #include <string>
 #include <unordered_map>
 
-#include "../utility.h"
 #include "../Networking/client.h"
 #include "../Networking/server.h"
-
-// struct IpAddress;
+#include "../utility.h"
 
 class Peer {
+  protected:
     const char* host;
     const char* port;
-    
-  protected:
-    Server *server;
-    Client *client;
+    std::string uuid;
+
+    Server* server;
+    Client* client;
     // maps uuid to ip address
     std::unordered_map<std::string, IpAddress> providerPeers;
+    IpAddress leaderIP;
 
   public:
-    Peer(const char* host, const char* p);
+    Peer();
+    void setupServer(const char* host, const char* port);
     virtual ~Peer();
 };
 

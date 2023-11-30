@@ -1,25 +1,30 @@
 #include "../../include/Peers/requester.h"
+
 using namespace std;
 
-Requester::Requester(const char* host, const char* port) : Peer(host, port) {}
+Requester::Requester() : Peer() { setupServer("", "8080"); }
 
-Requester::~Requester() {
-    // additional code here
+Requester::~Requester() noexcept {}
+
+void Requester::set_task_request(TaskRequest request_) {
+    serializedRequest = request_.serializeRequest();
 }
-void Requester::set_task_request(TaskRequest request_) { request = request_; }
 
 void Requester::send_discovery_request() {
-    // additional code here
+    // update the member hash map
 
+    leaderIP = IpAddress{"tcp://0.tcp.ngrok.io", 14076};
 }
 
 void Requester::send_task_request() {
-    // for (const auto& peer : providerPeers) {
-        
-    // }
+    // additional code here
+    // client = new Client(host, port);
+    const char* host = leaderIP.ipAddress.c_str();
+    const char* port = std::to_string(leaderIP.port).c_str();
+    client->setUpConn(host, port, "tcp");
+    client->send(serializedRequest.c_str());
 }
 
 void Requester::check_status() {}
 
-TaskResponse Requester::get_results() {}
-
+TaskResponse Requester::get_results() { return TaskResponse(); }

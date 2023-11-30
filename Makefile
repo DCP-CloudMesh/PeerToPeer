@@ -1,15 +1,15 @@
 TYPE := PROVIDER
+TARGET := main
 
 CXX := g++ 
-CXXFLAGS := -std=c++20 -Wall -D"${TYPE}"
+CXXFLAGS := -std=c++20 -Wall -D"${TYPE}" -o ${TARGET}
 
 SRC_DIR := src
 BUILD_DIR := build
 
-TARGET := main
 
 # List of source files
-SRCS := $(wildcard $(SRC_DIR)/**/*.cpp) main.cpp
+SRCS := $(wildcard $(SRC_DIR)/**/*.cpp) $(wildcard $(SRC_DIR)/*.cpp) main.cpp
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 
 $(TARGET): $(OBJS)

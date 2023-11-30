@@ -4,10 +4,15 @@
 #include <unordered_set>
 
 class TaskRequest {
-  public:
     std::string leaderUuid;
     // PARTIITONED TRAINING DATA
     std::unordered_set<std::string> assignedPeers;
+
+  public:
+    TaskRequest(std::string leaderUuid,
+                std::unordered_set<std::string> assignedPeers);
+
+    std::string serializeRequest() const;
 };
 
 #endif

@@ -6,7 +6,11 @@
 
 using namespace std;
 
-Provider::Provider(const char* host, const char* port) : Peer(host, port) {
-    this->isBusy = false;
-    this->isLocalBootstrap = false;
+Provider::Provider(unsigned short port) : Peer() {
+    isBusy = false;
+    isLocalBootstrap = false;
+
+    setupServer("", to_string(port).c_str());
 }
+
+void Provider::listen() { server->acceptConn(); }

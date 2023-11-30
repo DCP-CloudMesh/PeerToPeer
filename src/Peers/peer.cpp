@@ -1,13 +1,25 @@
 #include "../../include/Peers/peer.h"
 
-// #include "../../utility.h"
+#include "../../include/utility.h"
 
 using namespace std;
 
-Peer::Peer(const char* host, const char* port) : host(host), port(port){
+Peer::Peer() {
+    // initialize client
+    client = new Client();
+
+    // instantiate uuid
+    uuid = uuid::generate_uuid_v4();
+}
+
+void Peer::setupServer(const char* host, const char* port) {
+    this->host = host;
+    this->port = port;
     const char* type = "tcp";
-    this->server = new Server(host, port, type);
-    this->client = new Client();
+    // initialize server
+    server = new Server(host, port, type);
+    server->setupServer();
 }
 
 Peer::~Peer() {}
+//
