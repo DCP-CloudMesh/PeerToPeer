@@ -69,7 +69,7 @@ void close_ngrok_forwarding() { system("pkill ngrok"); }
 
 string vectorToString(vector<int> vec) {
     stringstream ss;
-    for (int i = 0; i < vec.size(); i++) {
+    for (unsigned int i = 0; i < vec.size(); i++) {
         ss << vec[i];
         if (i != vec.size() - 1) {
             ss << ",";
