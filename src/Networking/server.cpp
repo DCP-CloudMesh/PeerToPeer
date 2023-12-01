@@ -56,7 +56,6 @@ void Server::setupServer() {
 bool Server::acceptConn() {
     sockaddr_in clientAddr;
     socklen_t clientAddrLen = sizeof(clientAddr);
-    cout << "Waiting for client to connect..." << endl;
     activeConn = accept(server, (struct sockaddr*)&clientAddr, &clientAddrLen);
 
     if (activeConn == -1) {
@@ -75,7 +74,6 @@ string Server::receiveFromConn() {
     if (mLen < 0) {
         cerr << "Error reading: " << strerror(errno) << endl;
     }
-    cout << "Server Received: " << string(buffer, mLen) << endl;
     return string(buffer, mLen);
 }
 
@@ -87,7 +85,6 @@ void Server::replyToConn(string message) {
 void Server::closeConn() { close(activeConn); }
 
 Server::~Server() {
-    cout << "Closing server" << endl;
     if (server != -1) {
         close(server);
     }

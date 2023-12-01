@@ -49,10 +49,9 @@ void TaskRequest::deserialize(std::string msg) {
             auto followersJson = j["assignedFollowers"];
             for (auto it = followersJson.begin(); it != followersJson.end();
                  ++it) {
-                // Deserialize each entry and add to the map
                 assignedFollowers[it.key()] =
-                    deserializeIpAddress(it.value().dump());
-            }
+                    deserializeIpAddress(it.value());
+            }   
         }
 
         if (j.contains("trainingData"))

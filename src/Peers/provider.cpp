@@ -16,17 +16,19 @@ Provider::Provider(unsigned short port, string uuid) : Peer(uuid) {
 
 void Provider::listen() {
     while (true) {
+        cout << "Waiting for requester to connect..." << endl;
         bool connStatus = server->acceptConn();
         if (connStatus) {
             // receive task request object from client
             string msg = server->receiveFromConn();
-            server->replyToConn("Received task request.\n");
-
+            server->replyToConn("Provider ID: " + uuid +
+                                " : Received task request.");
             // process this workload, first deserialize into a task
             task = make_unique<TaskRequest>(vector<int>());
             task->deserialize(msg);
             server->replyToConn(
-                "Deserialized task request. Now processing workload.\n");
+                "Provider ID: " + uuid +
+                " : Deserialized task request. Now processing workload.\n");
             server->closeConn();
 
             // Run processWorkload() in a separate thread
@@ -37,6 +39,8 @@ void Provider::listen() {
                 vector<vector<int>> followerData{};
                 while (followerData.size() <
                        task->getAssignedFollowers().size()) {
+                    cout << endl;
+                    cout << "Waiting for follower peer to connect..." << endl;
                     bool connStatus = server->acceptConn();
                     // get data from followers and aggregate
                     string msg = server->receiveFromConn();
@@ -48,6 +52,8 @@ void Provider::listen() {
                     // append to followerData
                     followerData.push_back(followerResult.getTrainingData());
                 }
+
+                cout << endl;
 
                 workloadThread.join();
 
