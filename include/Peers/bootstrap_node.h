@@ -30,6 +30,7 @@ class BootstrapNode {
 
     std::string getFollowerIpAddress();
     unsigned short getFollowerPort();
+    std::string getFollowerUuid();
 };
 
 #endif // _BOOTSTRAP_NODE_H

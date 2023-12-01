@@ -25,6 +25,7 @@ class Peer {
 
   public:
     Peer();
+    Peer(std::string uuid);
     void setupServer(const char* host, const char* port);
     virtual ~Peer();
 };

@@ -19,7 +19,7 @@ class Provider : public Peer {
     std::string getPublicIPAddr();
 
   public:
-    Provider(unsigned short port);
+    Provider(unsigned short port, std::string uuid);
     void listen();
     void processData();
     void processWorkload(); // worker function to manipulate the TaskRequest

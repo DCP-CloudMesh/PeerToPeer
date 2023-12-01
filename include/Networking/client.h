@@ -15,7 +15,7 @@ class Client {
   public:
     Client();
     ~Client();
-    int setUpConn(const char* HOST, const char* PORT, const char* CONNTYPE);
+    int setupConn(const char* HOST, const char* PORT, const char* CONNTYPE);
     int sendRequest(const char* data);
 };
 

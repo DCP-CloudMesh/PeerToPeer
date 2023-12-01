@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Provider::Provider(unsigned short port) : Peer() {
+Provider::Provider(unsigned short port, string uuid) : Peer(uuid) {
     isBusy = false;
     isLocalBootstrap = false;
 
@@ -21,25 +21,20 @@ void Provider::listen() {
             // receive task request object from client
             string msg = server->receiveFromConn();
             server->replyToConn("Received task request.\n");
-            cout << "Received message: \n" << msg << endl;
 
             // process this workload, first deserialize into a task
+            task = make_unique<TaskRequest>(vector<int>());
             task->deserialize(msg);
             server->replyToConn(
                 "Deserialized task request. Now processing workload.\n");
             server->closeConn();
 
-            // print deserialized task ------------ REMOVE AFTER
-            // cout << "Task request: " << task->serialize() << endl;
-
             // Run processWorkload() in a separate thread
             thread workloadThread(&Provider::processWorkload, this);
-
             if (task->getLeaderUuid() == uuid) {
-                cout << "I am the leader." << endl;
                 // if this is the leader, send the result to the requester
                 // send back the result
-                vector<vector<int>> followerData;
+                vector<vector<int>> followerData{};
                 while (followerData.size() < task->getAssignedPeers().size()) {
                     bool connStatus = server->acceptConn();
                     // get data from followers and aggregate
@@ -54,7 +49,6 @@ void Provider::listen() {
                 }
 
                 workloadThread.join();
-                followerData.push_back(task->getTrainingData());
 
                 TaskRequest aggregatedResults = aggregateResults(followerData);
                 aggregatedResults.setLeaderUuid(task->getLeaderUuid());
@@ -63,20 +57,28 @@ void Provider::listen() {
                 // send back the result to the requester
                 // get the ip from the bootstrap server
                 // ------------------ hard code for now ------------------
-                const char* host = "8.tcp.ngrok.io";
-                const char* port = "13299";
-                client->setUpConn(host, port, "tcp");
+                const char* host = bootstrapNode.getServerIpAddress().c_str();
+                const char* port =
+                    std::to_string(bootstrapNode.getServerPort()).c_str();
+                cout << "Waiting for connection back to requester" << endl;
+
+                // busy wait until connection is established
+                while (client->setupConn(host, port, "tcp") == -1) {
+                    sleep(5);
+                }
+
                 client->sendRequest(aggregatedResults.serialize().c_str());
             } else {
-                cout << "I am a follower." << endl;
-                // if this is a follower, send the result to the leader
-                // send back the result
-
+                // if this is a follower, send the result to the leader peer
+                cout << "Waiting for connection back to leader" << endl;
                 // get the ip from the bootstrap server
                 // ------------------ hard code for now ------------------
-                const char* host = "8.tcp.ngrok.io";
-                const char* port = "13299";
-                client->setUpConn(host, port, "tcp");
+                const char* host = bootstrapNode.getLeaderIpAddress().c_str();
+                const char* port = std::to_string(bootstrapNode.getLeaderPort()).c_str();
+                // busy wait until connection is established with the leader
+                while (client->setupConn(host, port, "tcp") == -1) {
+                    sleep(5);
+                }
                 client->sendRequest(task->serialize().c_str());
             }
         }
@@ -85,11 +87,8 @@ void Provider::listen() {
 
 void Provider::processWorkload() {
     // data is stored in task->training data
-    // assume data is vector<int> for now
-
     vector<int> data = task->getTrainingData();
     sort(data.begin(), data.end());
-    cout << "Provider: data sorted." << endl;
     // store result in task->trainingdata
     task->setTrainingData(data);
 }

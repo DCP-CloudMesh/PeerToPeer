@@ -28,31 +28,3 @@ add_executable(requester ${SRCS} main.cpp)
 target_compile_definitions(requester PRIVATE REQUESTER=1)
 target_link_libraries(requester PRIVATE nlohmann_json::nlohmann_json)
 
-# Optionally, you can uncomment and use the following lines for individual compilation units:
-# foreach(SRC ${SRCS})
-#     get_filename_component(FILE_NAME ${SRC} NAME_WE)
-#     add_executable(${FILE_NAME} ${SRC})
-#     set_target_properties(${FILE_NAME} PROPERTIES
-#         RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR}
-#     )
-# endforeach()
-
-# Optionally, you can uncomment the following lines if you want to create a library
-# add_library(your_library_name ${SRCS})
-# target_include_directories(your_library_name PUBLIC ${SRC_DIR})
-# set_target_properties(your_library_name PROPERTIES
-#     ARCHIVE_OUTPUT_DIRECTORY ${BUILD_DIR}/lib
-# )
-
-# Optionally, you can uncomment the following lines for individual compilation units with a library:
-# foreach(SRC ${SRCS})
-#     get_filename_component(FILE_NAME ${SRC} NAME_WE)
-#     add_executable(${FILE_NAME} ${SRC})
-#     target_link_libraries(${FILE_NAME} PRIVATE your_library_name)
-#     set_target_properties(${FILE_NAME} PROPERTIES
-#         RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR}
-#     )
-# endforeach()
-
-# Optionally, you can add an installation target
-# install(TARGETS ${TARGET} DESTINATION bin)

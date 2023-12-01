@@ -4,17 +4,20 @@
 #include <unordered_set>
 
 #include "../utility.h"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 class TaskResponse {
     std::vector<int> trainingData;
 
   public:
-    TaskResponse(){}
+    TaskResponse() {}
     TaskResponse(std::vector<int> trainingData);
     std::vector<int> getTrainingData() const;
     void setTrainingData(std::vector<int> trainingData);
 
-    void deserialize(std::string msg){}
+    std::string serialize() const;
+    void deserialize(std::string msg);
 };
 
 #endif

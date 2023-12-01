@@ -35,9 +35,17 @@ std::string TaskRequest::serialize() const {
 }
 
 void TaskRequest::deserialize(std::string msg) {
-    json j = json::parse(msg);
-    leaderUuid = j["leaderUuid"];
-    assignedPeers = j["assignedPeers"];
-    // Explicitly convert the JSON array to std::vector<int>
-    trainingData = j["trainingData"].get<std::vector<int>>();
+    try {
+        json j = json::parse(msg);
+        if (j.contains("leaderUuid"))
+            leaderUuid = j["leaderUuid"].get<std::string>();
+        if (j.contains("assignedPeers"))
+            assignedPeers =
+                j["assignedPeers"].get<std::unordered_set<std::string>>();
+        if (j.contains("trainingData"))
+            trainingData = j["trainingData"].get<std::vector<int>>();
+
+    } catch (json::exception &e) {
+        cout << "JSON parsing error: " << e.what() << endl;
+    }
 }

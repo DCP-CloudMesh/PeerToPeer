@@ -19,9 +19,12 @@ void Requester::send_discovery_request() {
                          bootstrapNode.getLeaderPort()};
 
     taskRequests[0].setLeaderUuid(bootstrapNode.getLeaderUuid());
-    
+    providerPeers.insert({bootstrapNode.getLeaderUuid(), leaderIP});
+
     // add the follower peers
-    // providerPeers.insert({"1", IpAddress{"8.tcp.ngrok.io", 13299}});
+    IpAddress followerIP = IpAddress{bootstrapNode.getFollowerIpAddress(),
+                                     bootstrapNode.getFollowerPort()};
+    providerPeers.insert({bootstrapNode.getFollowerUuid(), followerIP});
 }
 
 void Requester::divide_task() {
@@ -33,9 +36,12 @@ void Requester::divide_task() {
     vector<int> trainingData = taskRequests[0].getTrainingData();
 
     // divide the vector into subvectors
-    int numSubtasks = providerPeers.size() + 1;
+    int numSubtasks = providerPeers.size();
     int subtaskSize = trainingData.size() / numSubtasks;
     int remainder = trainingData.size() % numSubtasks;
+
+    string leaderUuid = taskRequests[0].getLeaderUuid();
+    unordered_set<string> assignedPeers = taskRequests[0].getAssignedPeers();
 
     // create subvectors of requesttasks
     vector<TaskRequest> subtasks;
@@ -46,8 +52,8 @@ void Requester::divide_task() {
         }
 
         TaskRequest subtaskRequest = TaskRequest(subtaskData);
-        subtaskRequest.setLeaderUuid(taskRequests[0].getLeaderUuid());
-        subtaskRequest.setAssignedPeers(taskRequests[0].getAssignedPeers());
+        subtaskRequest.setLeaderUuid(leaderUuid);
+        subtaskRequest.setAssignedPeers(assignedPeers);
         taskRequests.push_back(subtaskRequest);
     }
 
@@ -74,14 +80,14 @@ void Requester::send_task_request() {
 
     // send the task request to the leader peer
     // serialize the requests
-    string serializedRequest = taskRequests[0].serialize();
-    const char* host = leaderIP.ipAddress.c_str();
-    const char* port = std::to_string(leaderIP.port).c_str();
-    client->setUpConn(host, port, "tcp");
-    client->sendRequest(serializedRequest.c_str());
+    // string serializedRequest = taskRequests[0].serialize();
+    // const char* host = leaderIP.ipAddress.c_str();
+    // const char* port = std::to_string(leaderIP.port).c_str();
+    // client->setupConn(host, port, "tcp");
+    // client->sendRequest(serializedRequest.c_str());
 
     // send the task request to the provider peers
-    int ctr = 1;
+    int ctr = 0;
     for (auto peer : providerPeers) {
         // serialize the requests
         string serializedRequest = taskRequests[ctr].serialize();
@@ -89,7 +95,7 @@ void Requester::send_task_request() {
         // set up the client
         const char* host = peer.second.ipAddress.c_str();
         const char* port = std::to_string(peer.second.port).c_str();
-        client->setUpConn(host, port, "tcp");
+        client->setupConn(host, port, "tcp");
 
         // send the request
         client->sendRequest(serializedRequest.c_str());
@@ -99,4 +105,23 @@ void Requester::send_task_request() {
 
 void Requester::check_status() {}
 
-TaskResponse Requester::get_results() { return TaskResponse(); }
+TaskResponse Requester::get_results() {
+    TaskResponse followerResult;
+
+    // busy wait until connection is established
+    // server->setupServer();
+    while (true) {
+        bool connStatus = server->acceptConn();
+        if (connStatus) {
+            // get data from followers and aggregate
+            string msg = server->receiveFromConn();
+            server->replyToConn("Received follower result.");
+            server->closeConn();
+            // deserialize into data
+            followerResult.deserialize(msg);
+            break;
+        }
+    }
+
+    return followerResult;
+}

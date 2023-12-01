@@ -6,7 +6,8 @@ Client::Client() : CONN{-1} {}
 
 Client::~Client() {}
 
-int Client::setUpConn(const char* HOST, const char* PORT, const char* CONNTYPE) {
+int Client::setupConn(const char* HOST, const char* PORT,
+                      const char* CONNTYPE) {
     addrinfo hints, *serverInfo;
 
     memset(&hints, 0, sizeof hints);

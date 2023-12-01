@@ -12,6 +12,11 @@ Peer::Peer() {
     uuid = uuid::generate_uuid_v4();
 }
 
+Peer::Peer(string uuid) : uuid(uuid) {
+    // initialize client
+    client = new Client();
+}
+
 void Peer::setupServer(const char* host, const char* port) {
     this->host = host;
     this->port = port;

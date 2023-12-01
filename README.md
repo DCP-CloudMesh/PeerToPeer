@@ -19,12 +19,11 @@ To execute, run the following commands:
 `./provider [8080]` (8080 is the default port, optional parameter)
 
 ### Requestor
-`./requestor [8080]` (8080 is the default port, optional parameter)
-
+`./requestor [8080 [r | c]]`\
+`8080` is the default port, optional parameter\
+`r` is an optional parameter to request to receive the result of the computation
+`c` is an optional parameter to request to provide the computation
 ## Clean
 
 To clean, run the following commands:
-### Provider
-`make clean TARGET=provider`
-### Requestor
-`make clean TARGET=requester`
+`make clean`
