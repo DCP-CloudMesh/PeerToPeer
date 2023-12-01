@@ -16,10 +16,10 @@ To compile both **PROVIDER** and **REQUESTER** locally, run the following comman
 
 To execute, run the following commands:
 ### Provider
-`./provider [8080]` (8080 is the default port, optional parameter)
+`./bin/provider [8080]` (8080 is the default port, optional parameter)
 
 ### Requestor
-`./requestor [8080 [r | c]]`\
+`./bin/requestor [8080 [r | c]]`\
 `8080` is the default port, optional parameter\
 `r` is an optional parameter to request to receive the result of the computation
 `c` is an optional parameter to request to provide the computation

@@ -23,8 +23,9 @@ file(GLOB_RECURSE SRCS ${SRC_DIR}/*.cpp)
 add_executable(provider ${SRCS} main.cpp)
 target_compile_definitions(provider PRIVATE PROVIDER=1)
 target_link_libraries(provider PRIVATE nlohmann_json::nlohmann_json)
+set_target_properties(provider PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
 
 add_executable(requester ${SRCS} main.cpp)
 target_compile_definitions(requester PRIVATE REQUESTER=1)
 target_link_libraries(requester PRIVATE nlohmann_json::nlohmann_json)
-
+set_target_properties(requester PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
