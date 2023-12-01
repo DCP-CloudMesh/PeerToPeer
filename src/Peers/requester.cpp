@@ -3,7 +3,7 @@
 using namespace std;
 
 Requester::Requester(unsigned short port) : Peer() {
-    setupServer("", to_string(port).c_str());
+    setupServer("127.0.0.1", to_string(port).c_str());
 }
 
 Requester::~Requester() noexcept {}

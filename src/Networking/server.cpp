@@ -6,14 +6,22 @@ Server::Server(const char* host, const char* port, const char* type)
     : HOST{host}, PORT{port}, TYPE{type}, server{-1} {}
 
 void Server::setupServer() {
-    std::string response = startNgrokForwarding(stoi(PORT));
-
+#if defined(NOLOCAL)
+    string response = startNgrokForwarding(stoi(PORT));
     // update public IP address
     response = response.substr(6);
     std::string ip =
         response.substr(0, response.find(":")); // ignore "tcp://" prefix
-    unsigned short port = std::stoi(response.substr(ip.length() + 1));
+    unsigned short port = static_cast<unsigned short>(
+        std::stoi(response.substr(ip.length() + 1)));
     publicIP = IpAddress{ip, port};
+#elif defined(LOCAL)
+    publicIP = IpAddress{HOST, static_cast<unsigned short>(std::stoi(PORT))};
+#else
+    std::cerr << "Please specify either --local or --nolocal flag."
+              << std::endl;
+    exit(1);
+#endif
 
     cout << "Initializing server on " << publicIP.ipAddress << ":"
          << publicIP.port << endl;

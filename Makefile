@@ -1,16 +1,17 @@
 TYPE := PROVIDER
-TARGET := main
+TARGET := provider
+LOCAL := NOLOCAL
 
 CXX := g++ 
-CXXFLAGS := -std=c++20 -Wall -D"${TYPE}" -o ${TARGET}
+CXXFLAGS := -std=c++20 -Wall -D"${TYPE}" -D"${LOCAL}" -o ${TARGET}
 
 SRC_DIR := src
 BUILD_DIR := build
 
 
 # List of source files
-SRCS := $(wildcard $(SRC_DIR)/**/*.cpp) $(wildcard $(SRC_DIR)/*.cpp) main.cpp
-OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+SRCS := $(wildcard $(SRC_DIR)/**/*.cpp) $(wildcard $(SRC_DIR)/*.cpp) main.cpp 
+OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS)) 
 
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@

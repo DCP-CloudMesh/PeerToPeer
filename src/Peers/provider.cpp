@@ -11,7 +11,7 @@ Provider::Provider(unsigned short port) : Peer() {
     isBusy = false;
     isLocalBootstrap = false;
 
-    setupServer("", to_string(port).c_str());
+    setupServer("127.0.0.1", to_string(port).c_str());
 }
 
 void Provider::listen() {

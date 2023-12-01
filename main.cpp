@@ -10,6 +10,11 @@ using namespace std;
 int main(int argc, char* argv[]) {
     // const char* host = "";
     unsigned short port = 8080;
+
+    if (argc == 2) {
+        port = atoi(argv[1]);
+    }
+
     // BootstrapNode bootstrap
     vector<int> trainingData{2, 1, 4, 3, 6, 5, 9, 7, 8, 10};
 
