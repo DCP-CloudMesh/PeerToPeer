@@ -5,10 +5,16 @@
 #include <random>
 #include <sstream>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 struct IpAddress {
     std::string ipAddress;
     unsigned short port;
 };
+
+std::string serializeIpAddress(const IpAddress& ipAddress);
+IpAddress deserializeIpAddress(const std::string& jsonString);
 
 namespace uuid {
 static std::random_device rd;

@@ -12,19 +12,20 @@ using json = nlohmann::json;
 
 class TaskRequest {
     std::string leaderUuid;
-    std::unordered_set<std::string> assignedPeers;
+    std::unordered_map<std::string, IpAddress> assignedFollowers;
     std::vector<int> trainingData;
 
   public:
     TaskRequest(std::vector<int> trainingdata);
 
     void setLeaderUuid(std::string leaderUuid);
-    void setAssignedPeers(std::unordered_set<std::string> assignedPeers);
+    void
+    setAssignedFollowers(std::unordered_map<std::string, IpAddress> assignedFollowers);
     void setTrainingData(std::vector<int> trainingData);
 
     std::vector<int> getTrainingData() const;
     std::string getLeaderUuid() const;
-    std::unordered_set<std::string> getAssignedPeers() const;
+    std::unordered_map<std::string, IpAddress> getAssignedFollowers() const;
 
     std::string serialize() const;
     void deserialize(std::string msg);

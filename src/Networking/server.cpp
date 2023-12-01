@@ -84,6 +84,11 @@ void Server::replyToConn(string message) {
     send(activeConn, reply, strlen(reply), 0);
 }
 
-void Server::closeConn() {
-    close(activeConn);
+void Server::closeConn() { close(activeConn); }
+
+Server::~Server() {
+    cout << "Closing server" << endl;
+    if (server != -1) {
+        close(server);
+    }
 }

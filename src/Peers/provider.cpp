@@ -35,7 +35,8 @@ void Provider::listen() {
                 // if this is the leader, send the result to the requester
                 // send back the result
                 vector<vector<int>> followerData{};
-                while (followerData.size() < task->getAssignedPeers().size()) {
+                while (followerData.size() <
+                       task->getAssignedFollowers().size()) {
                     bool connStatus = server->acceptConn();
                     // get data from followers and aggregate
                     string msg = server->receiveFromConn();
@@ -52,7 +53,8 @@ void Provider::listen() {
 
                 TaskRequest aggregatedResults = aggregateResults(followerData);
                 aggregatedResults.setLeaderUuid(task->getLeaderUuid());
-                aggregatedResults.setAssignedPeers(task->getAssignedPeers());
+                aggregatedResults.setAssignedFollowers(
+                    task->getAssignedFollowers());
 
                 // send back the result to the requester
                 // get the ip from the bootstrap server
@@ -73,12 +75,15 @@ void Provider::listen() {
                 cout << "Waiting for connection back to leader" << endl;
                 // get the ip from the bootstrap server
                 // ------------------ hard code for now ------------------
-                const char* host = bootstrapNode.getLeaderIpAddress().c_str();
-                const char* port = std::to_string(bootstrapNode.getLeaderPort()).c_str();
+                const char* leaderHost =
+                    bootstrapNode.getLeaderIpAddress().c_str();
+                const char* leaderPort =
+                    std::to_string(bootstrapNode.getLeaderPort()).c_str();
                 // busy wait until connection is established with the leader
-                while (client->setupConn(host, port, "tcp") == -1) {
+                while (client->setupConn(leaderHost, leaderPort, "tcp") == -1) {
                     sleep(5);
                 }
+                workloadThread.join();
                 client->sendRequest(task->serialize().c_str());
             }
         }

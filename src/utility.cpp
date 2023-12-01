@@ -2,6 +2,26 @@
 
 using namespace std;
 
+std::string serializeIpAddress(const IpAddress& ipAddress) {
+    json j;
+    j["ip"] = ipAddress.ipAddress;
+    j["port"] = ipAddress.port;
+    return j.dump();
+}
+
+IpAddress deserializeIpAddress(const std::string& jsonString) {
+    IpAddress ipAddress;
+    try {
+        json j = json::parse(jsonString);
+        ipAddress.ipAddress = j["ip"].get<std::string>();
+        ipAddress.port = j["port"].get<unsigned short>();
+    } catch (json::exception& e) {
+        std::cout << "JSON parsing error for IpAddress: " << e.what()
+                  << std::endl;
+    }
+    return ipAddress;
+}
+
 string uuid::generate_uuid_v4() {
     stringstream ss;
     int i;

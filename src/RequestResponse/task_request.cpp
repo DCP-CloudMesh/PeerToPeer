@@ -9,9 +9,9 @@ void TaskRequest::setLeaderUuid(std::string leaderUuid) {
     this->leaderUuid = leaderUuid;
 }
 
-void TaskRequest::setAssignedPeers(
-    std::unordered_set<std::string> assignedPeers) {
-    this->assignedPeers = assignedPeers;
+void TaskRequest::setAssignedFollowers(
+    std::unordered_map<std::string, IpAddress> assignedFollowers) {
+    this->assignedFollowers = assignedFollowers;
 }
 
 void TaskRequest::setTrainingData(vector<int> trainingData) {
@@ -22,14 +22,18 @@ vector<int> TaskRequest::getTrainingData() const { return trainingData; }
 
 string TaskRequest::getLeaderUuid() const { return leaderUuid; }
 
-unordered_set<string> TaskRequest::getAssignedPeers() const {
-    return assignedPeers;
+std::unordered_map<std::string, IpAddress>
+TaskRequest::getAssignedFollowers() const {
+    return assignedFollowers;
 }
 
 std::string TaskRequest::serialize() const {
     json j;
     j["leaderUuid"] = leaderUuid;
-    j["assignedPeers"] = assignedPeers;
+    // Convert std::unordered_map to JSON object
+    for (const auto& entry : assignedFollowers) {
+        j["assignedFollowers"][entry.first] = serializeIpAddress(entry.second);
+    }
     j["trainingData"] = trainingData;
     return j.dump();
 }
@@ -39,13 +43,22 @@ void TaskRequest::deserialize(std::string msg) {
         json j = json::parse(msg);
         if (j.contains("leaderUuid"))
             leaderUuid = j["leaderUuid"].get<std::string>();
-        if (j.contains("assignedPeers"))
-            assignedPeers =
-                j["assignedPeers"].get<std::unordered_set<std::string>>();
+
+        if (j.contains("assignedFollowers")) {
+            assignedFollowers.clear(); // Clear existing data
+            auto followersJson = j["assignedFollowers"];
+            for (auto it = followersJson.begin(); it != followersJson.end();
+                 ++it) {
+                // Deserialize each entry and add to the map
+                assignedFollowers[it.key()] =
+                    deserializeIpAddress(it.value().dump());
+            }
+        }
+
         if (j.contains("trainingData"))
             trainingData = j["trainingData"].get<std::vector<int>>();
 
-    } catch (json::exception &e) {
+    } catch (json::exception& e) {
         cout << "JSON parsing error: " << e.what() << endl;
     }
 }

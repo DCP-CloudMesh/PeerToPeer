@@ -19,11 +19,7 @@ class Server {
 
   public:
     Server(const char* host, const char* port, const char* type);
-    ~Server() {
-        if (server != -1) {
-            close(server);
-        }
-    };
+    ~Server();
     void setupServer();                    // prepare server for connection
     bool acceptConn();                     // blocking
     std::string receiveFromConn();         // process the active conn
