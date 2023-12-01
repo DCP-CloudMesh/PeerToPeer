@@ -12,7 +12,7 @@
 class Server {
     const char* HOST;
     const char* PORT;
-    const char* TYPE;
+    const char* CONNTYPE;
     IpAddress publicIP;
     int server;     // stores the current running server id
     int activeConn; // stores the current active connection id

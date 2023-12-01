@@ -2,28 +2,29 @@
 
 ## Compilation
 
-To compile, run the following commands:
-### Provider
-`make TYPE=PROVIDER TARGET=server`
-### Requestor
-`make TYPE=REQUESTER TARGET=client`
+To compile both **PROVIDER** and **REQUESTER**, run the following commands:
+`cmake -DLOCAL=0 .`
+`cmake --build .`
 
 ## Compilation (Local)
 
-To compile, run the following commands:
-### Provider
-`make TYPE=PROVIDER TARGET=server LOCAL=LOCAL`
-### Requestor
-`make TYPE=REQUESTER TARGET=client LOCAL=LOCAL`
-
-
-Make sure to run `make clean` before compiling locally. This is since the flags are not removed for individual files.
+To compile both **PROVIDER** and **REQUESTER** locally, run the following commands:
+`cmake -DLOCAL=1 .`
+`cmake --build .`
 
 ## Execution
 
 To execute, run the following commands:
 ### Provider
-`./server [8080]` (8080 is the default port, optional parameter)
+`./provider [8080]` (8080 is the default port, optional parameter)
 
 ### Requestor
-`./client [8080]` (8080 is the default port, optional parameter)
+`./requestor [8080]` (8080 is the default port, optional parameter)
+
+## Clean
+
+To clean, run the following commands:
+### Provider
+`make clean TARGET=provider`
+### Requestor
+`make clean TARGET=requester`

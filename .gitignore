@@ -10,3 +10,9 @@ build
 main
 client
 prod
+
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+
+_deps

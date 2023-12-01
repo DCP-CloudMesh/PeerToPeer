@@ -3,7 +3,7 @@
 using namespace std;
 
 Server::Server(const char* host, const char* port, const char* type)
-    : HOST{host}, PORT{port}, TYPE{type}, server{-1} {}
+    : HOST{host}, PORT{port}, CONNTYPE{type}, server{-1} {}
 
 void Server::setupServer() {
 #if defined(NOLOCAL)

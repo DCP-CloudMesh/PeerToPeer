@@ -26,38 +26,18 @@ unordered_set<string> TaskRequest::getAssignedPeers() const {
     return assignedPeers;
 }
 
-string TaskRequest::serialize() const {
-    string serializedRequest = "TaskRequest\n";
-    serializedRequest += "LeaderUuid: " + leaderUuid + "\n";
-    serializedRequest += "AssignedPeers:";
-    for (auto peer : assignedPeers) {
-        serializedRequest += " " + peer;
-    }
-    serializedRequest += "\n";
-    serializedRequest += "TrainingData: " + vectorToString(trainingData) + "\n";
-    return serializedRequest;
+std::string TaskRequest::serialize() const {
+    json j;
+    j["leaderUuid"] = leaderUuid;
+    j["assignedPeers"] = assignedPeers;
+    j["trainingData"] = trainingData;
+    return j.dump();
 }
 
-void TaskRequest::deserialize(string msg) {
-    stringstream ss(msg);
-    // Ignore the initial "TaskRequest" part
-    ss.ignore(numeric_limits<streamsize>::max());
-
-    // LeaderUuid
-    ss.ignore(numeric_limits<streamsize>::max(), ':');
-    ss >> leaderUuid;
-
-    // AssignedPeers
-    ss.ignore(numeric_limits<streamsize>::max(), ':');
-    string peer;
-    while (getline(ss, peer, ' ')) {
-        assignedPeers.insert(peer);
-    }
-
-    // TrainingData
-    ss.ignore(numeric_limits<streamsize>::max(), ':');
-    string element;
-    while (getline(ss, element, ',')) {
-        trainingData.push_back(stoi(element));
-    }
+void TaskRequest::deserialize(std::string msg) {
+    json j = json::parse(msg);
+    leaderUuid = j["leaderUuid"];
+    assignedPeers = j["assignedPeers"];
+    // Explicitly convert the JSON array to std::vector<int>
+    trainingData = j["trainingData"].get<std::vector<int>>();
 }
