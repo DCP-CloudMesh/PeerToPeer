@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <thread>
+#include <algorithm>
 
 using namespace std;
 
