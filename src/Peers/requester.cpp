@@ -22,7 +22,7 @@ void Requester::send_discovery_request() {
     providerPeers.insert({bootstrapNode.getLeaderUuid(), leaderIP});
 
     // add the follower peers
-    unordered_map<string, IpAddress> followerPeers{};
+    AddressTable followerPeers{};
     IpAddress followerIP = IpAddress{bootstrapNode.getFollowerIpAddress(),
                                      bootstrapNode.getFollowerPort()};
     providerPeers.insert({bootstrapNode.getFollowerUuid(), followerIP});
@@ -45,7 +45,7 @@ void Requester::divide_task() {
     int remainder = trainingData.size() % numSubtasks;
 
     string leaderUuid = taskRequests[0].getLeaderUuid();
-    unordered_map<string, IpAddress> assignedFollowers =
+    AddressTable assignedFollowers =
         taskRequests[0].getAssignedFollowers();
 
     // create subvectors of requesttasks
@@ -92,7 +92,7 @@ void Requester::send_task_request() {
 
         // set up the client
         const char* host = peer.second.ipAddress.c_str();
-        const char* port = std::to_string(peer.second.port).c_str();
+        const char* port = to_string(peer.second.port).c_str();
         client->setupConn(host, port, "tcp");
 
         // send the request

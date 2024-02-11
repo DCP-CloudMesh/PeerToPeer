@@ -2,7 +2,6 @@
 #define _PEER_H
 
 #include <string>
-#include <unordered_map>
 
 #include "../Networking/client.h"
 #include "../Networking/server.h"
@@ -18,7 +17,7 @@ class Peer {
     Server* server;
     Client* client;
     // maps uuid to ip address
-    std::unordered_map<std::string, IpAddress> providerPeers;
+    AddressTable providerPeers;
     IpAddress leaderIP;
 
     BootstrapNode bootstrapNode;

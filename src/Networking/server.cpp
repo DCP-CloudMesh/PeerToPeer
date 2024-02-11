@@ -10,16 +10,16 @@ void Server::setupServer() {
     string response = startNgrokForwarding(stoi(PORT));
     // update public IP address
     response = response.substr(6);
-    std::string ip =
+    string ip =
         response.substr(0, response.find(":")); // ignore "tcp://" prefix
     unsigned short port = static_cast<unsigned short>(
-        std::stoi(response.substr(ip.length() + 1)));
+        stoi(response.substr(ip.length() + 1)));
     publicIP = IpAddress{ip, port};
 #elif defined(LOCAL)
-    publicIP = IpAddress{HOST, static_cast<unsigned short>(std::stoi(PORT))};
+    publicIP = IpAddress{HOST, static_cast<unsigned short>(stoi(PORT))};
 #else
-    std::cerr << "Please specify either --local or --nolocal flag."
-              << std::endl;
+    cerr << "Please specify either --local or --nolocal flag."
+              << endl;
     exit(1);
 #endif
 

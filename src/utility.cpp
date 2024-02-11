@@ -1,23 +1,25 @@
 #include "../include/utility.h"
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using namespace nlohmann;
 
-std::string serializeIpAddress(const IpAddress& ipAddress) {
+string serializeIpAddress(const IpAddress& ipAddress) {
     json j;
     j["ip"] = ipAddress.ipAddress;
     j["port"] = ipAddress.port;
     return j.dump();
 }
 
-IpAddress deserializeIpAddress(const std::string& jsonString) {
+IpAddress deserializeIpAddress(const string& jsonString) {
     IpAddress ipAddress;
     try {
         json j = json::parse(jsonString);
-        ipAddress.ipAddress = j["ip"].get<std::string>();
+        ipAddress.ipAddress = j["ip"].get<string>();
         ipAddress.port = j["port"].get<unsigned short>();
     } catch (json::exception& e) {
-        std::cout << "JSON parsing error for IpAddress: " << e.what()
-                  << std::endl;
+        cout << "JSON parsing error for IpAddress: " << e.what()
+             << endl;
     }
     return ipAddress;
 }
@@ -89,7 +91,7 @@ void close_ngrok_forwarding() { system("pkill ngrok"); }
 
 string vectorToString(vector<int> vec) {
     stringstream ss;
-    for (int i = 0; i < vec.size(); i++) {
+    for (unsigned int i = 0; i < vec.size(); i++) {
         ss << vec[i];
         if (i != vec.size() - 1) {
             ss << ",";
