@@ -1,6 +1,8 @@
 #include "../../include/RequestResponse/task_response.h"
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using namespace nlohmann;
 
 vector<int> TaskResponse::getTrainingData() const { return trainingData; }
 

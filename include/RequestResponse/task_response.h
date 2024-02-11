@@ -4,8 +4,6 @@
 #include <unordered_set>
 
 #include "../utility.h"
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 class TaskResponse {
     std::vector<int> trainingData;

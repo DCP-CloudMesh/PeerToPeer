@@ -1,6 +1,8 @@
 #include "../include/utility.h"
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using namespace nlohmann;
 
 std::string serializeIpAddress(const IpAddress& ipAddress) {
     json j;

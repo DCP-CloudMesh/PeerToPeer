@@ -7,8 +7,6 @@
 #include <vector>
 
 #include "../utility.h"
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 class TaskRequest {
     std::string leaderUuid;

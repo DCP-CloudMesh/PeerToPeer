@@ -1,6 +1,8 @@
 #include "../../include/RequestResponse/task_request.h"
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using namespace nlohmann;
 
 TaskRequest::TaskRequest(vector<int> trainingData)
     : trainingData{trainingData} {}

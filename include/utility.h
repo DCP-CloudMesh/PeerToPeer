@@ -5,9 +5,6 @@
 #include <random>
 #include <sstream>
 
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
 struct IpAddress {
     std::string ipAddress;
     unsigned short port;
