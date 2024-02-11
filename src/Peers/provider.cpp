@@ -67,7 +67,7 @@ void Provider::listen() {
                 // ------------------ hard code for now ------------------
                 const char* host = bootstrapNode.getServerIpAddress().c_str();
                 const char* port =
-                    std::to_string(bootstrapNode.getServerPort()).c_str();
+                    to_string(bootstrapNode.getServerPort()).c_str();
                 cout << "Waiting for connection back to requester" << endl;
 
                 // busy wait until connection is established
@@ -84,7 +84,7 @@ void Provider::listen() {
                 const char* leaderHost =
                     bootstrapNode.getLeaderIpAddress().c_str();
                 const char* leaderPort =
-                    std::to_string(bootstrapNode.getLeaderPort()).c_str();
+                    to_string(bootstrapNode.getLeaderPort()).c_str();
                 // busy wait until connection is established with the leader
                 while (client->setupConn(leaderHost, leaderPort, "tcp") == -1) {
                     sleep(5);

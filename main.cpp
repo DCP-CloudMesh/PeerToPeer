@@ -26,11 +26,11 @@ int main(int argc, char* argv[]) {
     vector<int> trainingData{2, 1, 4, 3, 6, 5, 9, 7, 8, 10};
 
 #if defined(PROVIDER)
-    std::cout << "Running as provider on port " << port << "." << std::endl;
+    cout << "Running as provider on port " << port << "." << endl;
     Provider p = Provider(port, uuid);
     p.listen();
 #elif defined(REQUESTER)
-    std::cout << "Running as requester." << std::endl;
+    cout << "Running as requester." << endl;
     Requester r = Requester(port);
 
     string requestType = "c";
@@ -47,14 +47,14 @@ int main(int argc, char* argv[]) {
 
         // sends the task request to the leader and provider peers
         r.send_task_request();
-        std::cout << "Sent task request." << std::endl;
+        cout << "Sent task request." << endl;
     } else if (requestType == "r") {
         TaskResponse response = r.get_results();
-        std::cout << "Received response: " << response.serialize() << std::endl;
+        cout << "Received response: " << response.serialize() << endl;
     }
 
 #else
-    std::cout << "Please specify either --provider or --requester flag."
-              << std::endl;
+    cout << "Please specify either --provider or --requester flag."
+         << endl;
 #endif
 }

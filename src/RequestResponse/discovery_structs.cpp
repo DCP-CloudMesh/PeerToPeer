@@ -1,21 +1,23 @@
 #include "../../include/RequestResponse/discovery_structs.h"
 
-std::string serializeDiscoveryRequest(const DiscoveryRequest& request) {
-    std::string serializedData = request.req_uuid + "|" +
-                                 request.req_ipAddress + "|" +
-                                 std::to_string(request.req_port) + "|" +
-                                 std::to_string(request.peers_requested);
+using namespace std;
+
+string serializeDiscoveryRequest(const DiscoveryRequest& request) {
+    string serializedData = request.req_uuid + "|" +
+                            request.req_ipAddress + "|" +
+                            to_string(request.req_port) + "|" +
+                            to_string(request.peers_requested);
     return serializedData;
 }
 
 DiscoveryRequest
-deserializeDiscoveryRequest(const std::string& serializedData) {
+deserializeDiscoveryRequest(const string& serializedData) {
     DiscoveryRequest request;
     size_t pos = 0;
     size_t prevPos = 0;
     for (int i = 0; i < 4; ++i) {
         pos = serializedData.find('|', prevPos);
-        std::string token = serializedData.substr(prevPos, pos - prevPos);
+        string token = serializedData.substr(prevPos, pos - prevPos);
         prevPos = pos + 1;
         switch (i) {
         case 0:
@@ -25,10 +27,10 @@ deserializeDiscoveryRequest(const std::string& serializedData) {
             request.req_ipAddress = token;
             break;
         case 2:
-            request.req_port = std::stoi(token);
+            request.req_port = stoi(token);
             break;
         case 3:
-            request.peers_requested = std::stoi(token);
+            request.peers_requested = stoi(token);
             break;
         }
     }

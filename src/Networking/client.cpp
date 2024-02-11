@@ -15,28 +15,28 @@ int Client::setupConn(const char* HOST, const char* PORT,
     hints.ai_socktype = SOCK_STREAM;
 
     if (getaddrinfo(HOST, PORT, &hints, &serverInfo) != 0) {
-        std::cerr << "Error getting address info: " << gai_strerror(errno)
-                  << std::endl;
+        cerr << "Error getting address info: " << gai_strerror(errno)
+             << endl;
         return 1;
     }
 
     for (auto addr = serverInfo; addr != nullptr; addr = addr->ai_next) {
         CONN = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
         if (CONN == -1) {
-            std::cerr << "Error creating socket: " << strerror(errno)
-                      << std::endl;
+            cerr << "Error creating socket: " << strerror(errno)
+                 << endl;
             continue;
         }
 
         if (connect(CONN, addr->ai_addr, addr->ai_addrlen) == -1) {
-            std::cerr << "Error connecting: " << strerror(errno) << std::endl;
+            cerr << "Error connecting: " << strerror(errno) << endl;
             close(CONN);
             CONN = -1;
             continue;
         }
 
         // If we reached here, the CONN was successful
-        std::cout << "Connection successful." << std::endl;
+        cout << "Connection successful." << endl;
         break;
     }
 
