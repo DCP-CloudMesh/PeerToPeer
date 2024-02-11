@@ -6,22 +6,51 @@ using namespace nlohmann;
 
 string serializeIpAddress(const IpAddress& ipAddress) {
     json j;
-    j["ip"] = ipAddress.ipAddress;
+    j["ip"] = ipAddress.host;
     j["port"] = ipAddress.port;
     return j.dump();
+}
+
+IpAddress::IpAddress(const string& host, const unsigned short port)
+    : host(host), port(port) {}
+
+IpAddress::IpAddress(const char* host, const char* port) {
+    this->host = host;
+    string portStr(port);
+    this->port = stoi(portStr);
 }
 
 IpAddress deserializeIpAddress(const string& jsonString) {
     IpAddress ipAddress;
     try {
         json j = json::parse(jsonString);
-        ipAddress.ipAddress = j["ip"].get<string>();
+        ipAddress.host = j["ip"].get<string>();
         ipAddress.port = j["port"].get<unsigned short>();
     } catch (json::exception& e) {
-        cout << "JSON parsing error for IpAddress: " << e.what()
-             << endl;
+        cout << "JSON parsing error for IpAddress: " << e.what() << endl;
     }
     return ipAddress;
+}
+
+string serializeAddressTable(const AddressTable& addressTable) {
+    json j;
+    for (auto & it : addressTable) {
+        j[it.first] = serializeIpAddress(it.second);
+    }
+    return j.dump();
+}
+
+AddressTable deserializeAddressTable(const string& jsonString) {
+    AddressTable addressTable;
+    try {
+        json j = json::parse(jsonString);
+        for (auto it = j.begin(); it != j.end(); it++) {
+            addressTable[it.key()] = deserializeIpAddress(it.value());
+        }
+    } catch (json::exception& e) {
+        cout << "JSON parsing error for address table: " << e.what() << endl;
+    }
+    return addressTable;
 }
 
 string uuid::generate_uuid_v4() {

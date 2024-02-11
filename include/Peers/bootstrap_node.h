@@ -2,36 +2,24 @@
 #define _BOOTSTRAP_NODE_H
 
 #include <string>
-
 #include "../utility.h"
 
-class BootstrapNode {
-    // if inherited from peer, eliminate:
-    std::string uuid;
-    std::string ipAddress;
-    unsigned short port;
-    AddressTable providerPeers;
-    // end if inherited from peer
+#include "peer.h"
 
+class BootstrapNode : public Peer {
   public:
-    BootstrapNode(std::string, unsigned short);
+    BootstrapNode(const char*, std::string);
     // ----------------- FIX LATER -----------------
     BootstrapNode() {}
     ~BootstrapNode();
 
-    void listenForRequests();
-    void discovery();
+    static const char* getServerIpAddress();
+    static const char* getServerPort();
 
-    std::string getServerIpAddress();
-    unsigned short getServerPort();
-
-    std::string getLeaderIpAddress();
-    unsigned short getLeaderPort();
-    std::string getLeaderUuid();
-
-    std::string getFollowerIpAddress();
-    unsigned short getFollowerPort();
-    std::string getFollowerUuid();
+    void registerPeer(const std::string& peerUuid, const IpAddress& peerIpAddr);
+    AddressTable discoverPeers(const std::string& peerUuid,
+                               const unsigned int peersRequested);
+    void listen();
 };
 
 #endif // _BOOTSTRAP_NODE_H

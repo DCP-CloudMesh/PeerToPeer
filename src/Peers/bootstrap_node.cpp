@@ -1,65 +1,97 @@
 #include "../../include/Peers/bootstrap_node.h"
+#include "../../include/RequestResponse/message.h"
+#include "../../include/RequestResponse/registration.h"
+#include "../../include/RequestResponse/discovery_request.h"
+#include "../../include/RequestResponse/discovery_response.h"
+
 using namespace std;
 
-BootstrapNode::BootstrapNode(string uuid, unsigned short port) {}
+BootstrapNode::BootstrapNode(const char* port, string uuid) : Peer(uuid) {
+    setupServer("127.0.0.1", port);
+}
 BootstrapNode::~BootstrapNode() {}
 
-string BootstrapNode::getServerIpAddress() {
-    string ip;
+const char* BootstrapNode::getServerIpAddress() {
 #if defined(NOLOCAL)
-    ip = "8.tcp.ngrok.io";
-#elif defined(LOCAL)
-    ip = "127.0.0.1";
+    return "8.tcp.ngrok.io";
+#else
+    return "127.0.0.1";
 #endif
-    return ip;
-}
-unsigned short BootstrapNode::getServerPort() {
-    unsigned short port;
-#if defined(NOLOCAL)
-    port = 12701;
-#elif defined(LOCAL)
-    port = 8082;
-#endif
-    return port;
 }
 
-string BootstrapNode::getLeaderIpAddress() {
-    string ip;
+const char* BootstrapNode::getServerPort() {
 #if defined(NOLOCAL)
-    ip = "8.tcp.ngrok.io";
-#elif defined(LOCAL)
-    ip = "127.0.0.1";
+    return "12701";
+#else
+    return "8080";
 #endif
-    return ip;
-}
-unsigned short BootstrapNode::getLeaderPort() {
-    unsigned short port;
-#if defined(NOLOCAL)
-    port = 12701;
-#elif defined(LOCAL)
-    port = 8080;
-#endif
-    return port;
-}
-string BootstrapNode::getLeaderUuid() { return "1"; }
-
-string BootstrapNode::getFollowerIpAddress() {
-    string ip;
-#if defined(NOLOCAL)
-    ip = "8.tcp.ngrok.io";
-#elif defined(LOCAL)
-    ip = "127.0.0.1";
-#endif
-    return ip;
-}
-unsigned short BootstrapNode::getFollowerPort() {
-    unsigned short port;
-#if defined(NOLOCAL)
-    port = 12701;
-#elif defined(LOCAL)
-    port = 8081;
-#endif
-    return port;
 }
 
-string BootstrapNode::getFollowerUuid() { return "2"; }
+void BootstrapNode::registerPeer(const string& peerUuid,
+                                 const IpAddress& peerIpAddr) {
+    providerPeers[peerUuid] = peerIpAddr;
+    cout << "Registered peer " << peerUuid << " ("
+         << serializeIpAddress(peerIpAddr) << ")" << endl;
+}
+
+AddressTable BootstrapNode::discoverPeers(const string& peerUuid,
+                                          const unsigned int peersRequested) {
+    AddressTable providers;
+    for (auto & it : providerPeers) {
+        if (providers.size() == peersRequested) break;
+        if (it.first != peerUuid) {
+            providers[it.first] = it.second;
+        }
+    }
+    return providers;
+}
+
+void BootstrapNode::listen() {
+    while (true) {
+        cout << "Waiting for peer to connect..." << endl;
+        bool connStatus = server->acceptConn();
+        if (connStatus) {
+            // receive request from peer
+            string serializedData = server->receiveFromConn();
+            // process this request
+            string replyPrefix = "Bootstrap Node (" + uuid + ") - ";
+            Message msg;
+            msg.deserialize(serializedData);
+            string senderUuid = msg.getSenderUuid();
+            IpAddress senderIpAddr = msg.getSenderIpAddr(); 
+            shared_ptr<Payload> payload = msg.getPayload();
+
+            switch (payload->getType()) {
+            case Payload::Type::REGISTRATION:
+            {
+                server->replyToConn(replyPrefix + "received registration request");
+                registerPeer(senderUuid, senderIpAddr);
+                server->replyToConn("\nRegistration successful");
+                break;
+            }
+            case Payload::Type::DISCOVERY_REQUEST:
+            {
+                server->replyToConn(replyPrefix + "received discovery request");
+                shared_ptr<DiscoveryRequest> dr =
+                    static_pointer_cast<DiscoveryRequest>(payload);
+                unsigned int numPeersRequested = dr->getPeersRequested();
+                AddressTable providers = discoverPeers(senderUuid,
+                                                        numPeersRequested);
+                server->replyToConn("\nFound " + to_string(providers.size()) +
+                                    " provider(s)");
+                // Create response
+                client->setupConn(senderIpAddr.host.c_str(),
+                                    to_string(senderIpAddr.port).c_str(), "tcp");
+                shared_ptr<Payload> payload = make_shared<DiscoveryResponse>(providers);
+                Message response(uuid, IpAddress(host, port), payload);
+                client->sendRequest(response.serialize().c_str());
+                break;
+            }
+            default:
+                cerr << "Received unsupported message type" << endl;
+                server->replyToConn(replyPrefix + "received unsupported message type");
+            }
+            server->closeConn();
+        }
+    }
+}

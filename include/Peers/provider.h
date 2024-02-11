@@ -16,14 +16,16 @@ class Provider : public Peer {
     bool isLocalBootstrap;
     bool isLeader;
     std::unique_ptr<TaskRequest> task;
-    std::string getPublicIPAddr();
 
   public:
-    Provider(unsigned short port, std::string uuid);
+    Provider(const char* port, std::string uuid);
+    ~Provider() noexcept;
+
+    void registerWithBootstrap();
     void listen();
     void processData();
     void processWorkload(); // worker function to manipulate the TaskRequest
-    TaskRequest aggregateResults(std::vector<std::vector<int>> followerData);
+    TaskResponse aggregateResults(std::vector<std::vector<int>> followerData);
 };
 
 #endif

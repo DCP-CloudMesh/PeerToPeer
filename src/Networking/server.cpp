@@ -23,7 +23,7 @@ void Server::setupServer() {
     exit(1);
 #endif
 
-    cout << "Initializing server on " << publicIP.ipAddress << ":"
+    cout << "Initializing server on " << publicIP.host << ":"
          << publicIP.port << endl;
 
     server = socket(AF_INET, SOCK_STREAM, 0);

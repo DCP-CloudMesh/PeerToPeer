@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Peer::Peer() {
+Peer::Peer() : host{nullptr}, port{nullptr}, server{nullptr}, client{nullptr} {
     // initialize client
     client = new Client();
 
@@ -12,7 +12,8 @@ Peer::Peer() {
     uuid = uuid::generate_uuid_v4();
 }
 
-Peer::Peer(string uuid) : uuid(uuid) {
+Peer::Peer(const string& uuid) : host{nullptr}, port{nullptr}, uuid{uuid},
+                                 server{nullptr}, client{nullptr} {
     // initialize client
     client = new Client();
 }
@@ -26,5 +27,7 @@ void Peer::setupServer(const char* host, const char* port) {
     server->setupServer();
 }
 
-Peer::~Peer() {}
-//
+Peer::~Peer() {
+    delete client;
+    delete server;
+}
