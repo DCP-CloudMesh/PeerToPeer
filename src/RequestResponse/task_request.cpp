@@ -11,8 +11,7 @@ void TaskRequest::setLeaderUuid(string leaderUuid) {
     this->leaderUuid = leaderUuid;
 }
 
-void TaskRequest::setAssignedFollowers(
-    unordered_map<string, IpAddress> assignedFollowers) {
+void TaskRequest::setAssignedFollowers(AddressTable assignedFollowers) {
     this->assignedFollowers = assignedFollowers;
 }
 
@@ -24,8 +23,7 @@ vector<int> TaskRequest::getTrainingData() const { return trainingData; }
 
 string TaskRequest::getLeaderUuid() const { return leaderUuid; }
 
-unordered_map<string, IpAddress>
-TaskRequest::getAssignedFollowers() const {
+AddressTable TaskRequest::getAssignedFollowers() const {
     return assignedFollowers;
 }
 

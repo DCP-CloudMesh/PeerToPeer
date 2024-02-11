@@ -2,7 +2,7 @@
 #define _DISCOVERY_
 
 #include <string>
-#include <unordered_map>
+#include "../utility.h"
 
 struct DiscoveryRequest {
     std::string req_uuid;
@@ -12,7 +12,7 @@ struct DiscoveryRequest {
 };
 
 struct DiscoveryResponse {
-    std::unordered_map<std::string, std::string> providerPeers;
+    AddressTable providerPeers;
 };
 
 #endif

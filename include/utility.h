@@ -4,6 +4,8 @@
 #include <iostream>
 #include <random>
 #include <sstream>
+#include <string>
+#include <unordered_map>
 
 struct IpAddress {
     std::string ipAddress;
@@ -12,6 +14,8 @@ struct IpAddress {
 
 std::string serializeIpAddress(const IpAddress& ipAddress);
 IpAddress deserializeIpAddress(const std::string& jsonString);
+
+typedef std::unordered_map<std::string, IpAddress> AddressTable;
 
 namespace uuid {
 static std::random_device rd;

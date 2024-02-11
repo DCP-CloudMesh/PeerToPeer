@@ -2,14 +2,15 @@
 #define _BOOTSTRAP_NODE_H
 
 #include <string>
-#include <unordered_map>
+
+#include "../utility.h"
 
 class BootstrapNode {
     // if inherited from peer, eliminate:
     std::string uuid;
     std::string ipAddress;
     unsigned short port;
-    std::unordered_map<std::string, std::string> providerPeers;
+    AddressTable providerPeers;
     // end if inherited from peer
 
   public:
