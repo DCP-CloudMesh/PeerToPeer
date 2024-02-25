@@ -1,20 +1,24 @@
 #ifndef _TASK_RESPONSE_H
 #define _TASK_RESPONSE_H
-#include <string>
 
+#include <string>
+#include <vector>
+
+#include "payload.h"
 #include "../utility.h"
 
-class TaskResponse {
+class TaskResponse : public Payload {
     std::vector<int> trainingData;
 
   public:
-    TaskResponse() {}
-    TaskResponse(std::vector<int> trainingData);
-    std::vector<int> getTrainingData() const;
-    void setTrainingData(std::vector<int> trainingData);
+    TaskResponse();
+    TaskResponse(const std::vector<int>& trainingData);
 
-    std::string serialize() const;
-    void deserialize(std::string msg);
+    std::vector<int> getTrainingData() const;
+    void setTrainingData(const std::vector<int>& trainingData);
+
+    std::string serialize() const override;
+    void deserialize(const std::string& serializedData) override;
 };
 
 #endif

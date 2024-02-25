@@ -8,14 +8,21 @@
 #include <unordered_map>
 
 struct IpAddress {
-    std::string ipAddress;
+    std::string host;
     unsigned short port;
+
+    IpAddress() {}
+    IpAddress(const std::string& host, const unsigned short port);
+    IpAddress(const char* host, const char* port);
 };
 
 std::string serializeIpAddress(const IpAddress& ipAddress);
 IpAddress deserializeIpAddress(const std::string& jsonString);
 
 typedef std::unordered_map<std::string, IpAddress> AddressTable;
+
+std::string serializeAddressTable(const AddressTable& addressTable);
+AddressTable deserializeAddressTable(const std::string& jsonString);
 
 namespace uuid {
 static std::random_device rd;

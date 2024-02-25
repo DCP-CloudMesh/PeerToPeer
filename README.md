@@ -15,6 +15,9 @@ To compile both **PROVIDER** and **REQUESTER** locally, run the following comman
 ## Execution
 
 To execute, run the following commands:
+### Bootstrap
+`./bin/bootstrap` (8080 is reserved for bootstrap port so peers know where to connect)
+
 ### Provider
 `./bin/provider [8080]` (8080 is the default port, optional parameter)
 

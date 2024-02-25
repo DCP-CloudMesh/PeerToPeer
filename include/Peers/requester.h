@@ -11,16 +11,17 @@
 
 class Requester : protected Peer {
     std::vector<TaskRequest> taskRequests;
-    void divide_task();
+    void divideTask();
 
   public:
-    Requester(unsigned short port);
+    Requester(const char* port);
     ~Requester() noexcept;
-    void set_task_request(TaskRequest taskRequest);
-    void send_task_request();
-    void send_discovery_request();
-    void check_status();
-    TaskResponse get_results();
+    void sendDiscoveryRequest(unsigned int numProviders);
+    void waitForDiscoveryResponse();
+    void setTaskRequest(TaskRequest taskRequest);
+    void sendTaskRequest();
+    void checkStatus();
+    TaskResponse getResults();
 };
 
 #endif // _REQUESTER_H_

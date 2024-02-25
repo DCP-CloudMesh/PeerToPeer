@@ -20,6 +20,11 @@ set(SRC_DIR src)
 
 file(GLOB_RECURSE SRCS ${SRC_DIR}/*.cpp)
 
+add_executable(bootstrap ${SRCS} main.cpp)
+target_compile_definitions(bootstrap PRIVATE BOOTSTRAP=1)
+target_link_libraries(bootstrap PRIVATE nlohmann_json::nlohmann_json)
+set_target_properties(bootstrap PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
+
 add_executable(provider ${SRCS} main.cpp)
 target_compile_definitions(provider PRIVATE PROVIDER=1)
 target_link_libraries(provider PRIVATE nlohmann_json::nlohmann_json)

@@ -1,8 +1,11 @@
 #include "../../include/RequestResponse/task_response.h"
-#include <nlohmann/json.hpp>
 
 using namespace std;
 using namespace nlohmann;
+
+TaskResponse::TaskResponse() : Payload(Type::TASK_RESPONSE) {}
+TaskResponse::TaskResponse(const vector<int>& trainingData)
+    : Payload(Type::TASK_RESPONSE), trainingData{trainingData} {}
 
 vector<int> TaskResponse::getTrainingData() const { return trainingData; }
 
@@ -12,12 +15,10 @@ string TaskResponse::serialize() const {
     return j.dump();
 }
 
-void TaskResponse::deserialize(string msg) {
+void TaskResponse::deserialize(const string& serializedData) {
     try {
-        json j = json::parse(msg);
-        if (j.contains("trainingData"))
-            trainingData = j["trainingData"].get<vector<int>>();
-
+        json j = json::parse(serializedData);
+        trainingData = j["trainingData"].get<vector<int>>();
     } catch (json::exception& e) {
         cout << "JSON parsing error: " << e.what() << endl;
     }
