@@ -1,6 +1,7 @@
 #include "../../include/Peers/requester.h"
 #include "../../include/Peers/bootstrap_node.h"
 #include "../../include/RequestResponse/message.h"
+#include "../../include/RequestResponse/generic_response.h"
 #include "../../include/RequestResponse/discovery_request.h"
 #include "../../include/RequestResponse/discovery_response.h"
 #include "../../include/utility.h"
@@ -23,38 +24,34 @@ void Requester::sendDiscoveryRequest(unsigned int numProviders) {
     shared_ptr<Payload> payload = make_shared<DiscoveryRequest>(numProviders);
     Message msg(uuid, IpAddress(host, port), payload);
 
-    client->sendRequest(msg.serialize().c_str());
+    client->sendMsg(msg.serialize().c_str());
 }
 
 void Requester::waitForDiscoveryResponse() {
     cout << "Waiting for discovery response..." << endl;
-    while (true) {
-        bool connStatus = server->acceptConn();
-        if (connStatus) {
-            // receive response from bootstrap (or possibly another peer)
-            string serializedData = server->receiveFromConn();
-            // process response
-            string replyPrefix = "Requester (" + uuid + ") - ";
-            Message msg;
-            msg.deserialize(serializedData);
-            shared_ptr<Payload> payload = msg.getPayload();
+    while (!server->acceptConn());
 
-            if (payload->getType() == Payload::Type::DISCOVERY_RESPONSE) {
-                shared_ptr<DiscoveryResponse> dr =
-                    static_pointer_cast<DiscoveryResponse>(payload);
-                AddressTable availablePeers = dr->getAvailablePeers();
-                for (auto & it : availablePeers) {
-                    providerPeers[it.first] = it.second;
-                }
-                string logMsg = "Received " + to_string(availablePeers.size()) +
-                                " peers in discovery response";
-                cout << logMsg << endl;
-                server->replyToConn(replyPrefix + logMsg);
-            }
-            server->closeConn();
-            break;
+    // receive response from bootstrap (or possibly another peer)
+    string serializedData = server->receiveFromConn();
+    // process response
+    string replyPrefix = "Requester (" + uuid + ") - ";
+    Message msg;
+    msg.deserialize(serializedData);
+    shared_ptr<Payload> payload = msg.getPayload();
+
+    if (payload->getType() == Payload::Type::DISCOVERY_RESPONSE) {
+        shared_ptr<DiscoveryResponse> dr =
+            static_pointer_cast<DiscoveryResponse>(payload);
+        AddressTable availablePeers = dr->getAvailablePeers();
+        for (auto & it : availablePeers) {
+            providerPeers[it.first] = it.second;
         }
+        string logMsg = "Received " + to_string(availablePeers.size()) +
+                        " peers in discovery response";
+        cout << logMsg << endl;
+        server->replyToConn(replyPrefix + logMsg);
     }
+    server->closeConn();
 }
 
 void Requester::setTaskRequest(TaskRequest request_) {
@@ -160,7 +157,7 @@ void Requester::sendTaskRequest() {
         client->setupConn(host, port, "tcp");
 
         // send the request
-        client->sendRequest(msg.serialize().c_str());
+        client->sendMsg(msg.serialize().c_str());
         ctr++;
     }
 }
@@ -169,24 +166,28 @@ void Requester::checkStatus() {}
 
 TaskResponse Requester::getResults() {
     TaskResponse taskResult;
-
     // busy wait until connection is established
-    while (true) {
-        bool connStatus = server->acceptConn();
-        if (connStatus) {
-            // get data from workers and aggregate
-            string serializedData = server->receiveFromConn();
-            server->replyToConn("Received task result.");
-            server->closeConn();
-            // deserialize into data
-            Message msg;
-            msg.deserialize(serializedData);
-            shared_ptr<TaskResponse> taskRespPtr = 
-                static_pointer_cast<TaskResponse>(msg.getPayload());
-            taskResult = std::move(*taskRespPtr); // transfer data
-            break;
-        }
-    }
+    while (!server->acceptConn());
+
+    // get data from workers and aggregate
+    string serializedData = server->receiveFromConn();
+    server->replyToConn("Received task result.");
+    server->closeConn();
+
+    // deserialize into data
+    Message msg;
+    msg.deserialize(serializedData);
+    IpAddress leaderIpAddr = msg.getSenderIpAddr();
+    shared_ptr<TaskResponse> taskRespPtr =
+        static_pointer_cast<TaskResponse>(msg.getPayload());
+    taskResult = std::move(*taskRespPtr); // transfer data
+
+    // send success acknowledgement to provider
+    shared_ptr<GenericResponse> payload =
+        make_shared<GenericResponse>(GenericResponse::Status::SUCCESS);
+    Message response(uuid, IpAddress(host, port), payload);
+    client->setupConn(leaderIpAddr, "tcp");
+    client->sendMsg(response.serialize().c_str());
 
     return taskResult;
 }

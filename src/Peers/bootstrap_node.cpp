@@ -49,7 +49,7 @@ AddressTable BootstrapNode::discoverPeers(const string& peerUuid,
 void BootstrapNode::listen() {
     while (true) {
         cout << "Waiting for peer to connect..." << endl;
-        if(!server->acceptConn()) continue;
+        if (!server->acceptConn()) continue;
 
         // receive request from peer
         string serializedData = server->receiveFromConn();
@@ -84,7 +84,7 @@ void BootstrapNode::listen() {
                                 to_string(senderIpAddr.port).c_str(), "tcp");
             shared_ptr<Payload> payload = make_shared<DiscoveryResponse>(providers);
             Message response(uuid, IpAddress(host, port), payload);
-            client->sendRequest(response.serialize().c_str());
+            client->sendMsg(response.serialize().c_str());
             break;
         }
         default:

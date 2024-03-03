@@ -17,7 +17,8 @@ class Client {
     Client();
     ~Client();
     int setupConn(const char* HOST, const char* PORT, const char* CONNTYPE);
-    int sendRequest(const char* data);
+    int setupConn(const IpAddress& ipAddress, const char* CONNTYPE);
+    int sendMsg(const char* data);
 };
 
 #endif // _CLIENT_H
