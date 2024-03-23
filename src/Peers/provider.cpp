@@ -140,7 +140,10 @@ void Provider::leaderHandleTaskRequest(const IpAddress& requesterIpAddr) {
 }
 
 void Provider::followerHandleTaskRequest() {
-    processWorkload();
+    TaskResponse results = processWorkload();
+    shared_ptr<TaskResponse> payload = make_shared<TaskResponse>(results);
+    Message resultsMsg(uuid, IpAddress(host, port), payload);
+
     cout << "Waiting for connection back to leader" << endl;
     IpAddress leaderIp =
         task->getAssignedWorkers()[task->getLeaderUuid()];
@@ -148,16 +151,15 @@ void Provider::followerHandleTaskRequest() {
     while (client->setupConn(leaderIp, "tcp") == -1) {
         sleep(5);
     }
-    client->sendMsg(task->serialize().c_str());
+    client->sendMsg(resultsMsg.serialize().c_str());
 }
 
-void Provider::processWorkload() {
+TaskResponse Provider::processWorkload() {
     // data is stored in task->training data
     vector<int> data = task->getTrainingData();
     sort(data.begin(), data.end());
-    // store result in task->trainingdata
-    task->setTrainingData(data);
     cout << "Completed assigned workload" << endl;
+    return TaskResponse(data);
 }
 
 TaskResponse Provider::aggregateResults(vector<vector<int>> followerData) {
@@ -167,6 +169,5 @@ TaskResponse Provider::aggregateResults(vector<vector<int>> followerData) {
         data.insert(data.end(), follower.begin(), follower.end());
     }
     sort(data.begin(), data.end());
-    TaskResponse taskResponse(data);
-    return taskResponse;
+    return TaskResponse(data);
 }

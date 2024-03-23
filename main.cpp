@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
     if (requestType == "c") {
         vector<int> trainingData{2, 1, 4, 3, 6, 5, 9, 7, 8, 10};
-        TaskRequest request = TaskRequest(1, trainingData); // just one provider
+        TaskRequest request = TaskRequest(2, trainingData); // just one provider
         r.setTaskRequest(request);
         // sends the task request to the leader and provider peers
         r.sendTaskRequest();
