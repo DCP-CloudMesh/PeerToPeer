@@ -76,7 +76,7 @@ void BootstrapNode::listen() {
                 static_pointer_cast<DiscoveryRequest>(payload);
             unsigned int numPeersRequested = dr->getPeersRequested();
             AddressTable providers = discoverPeers(senderUuid,
-                                                    numPeersRequested);
+                                                   numPeersRequested);
             server->replyToConn("\nFound " + to_string(providers.size()) +
                                 " provider(s)");
             // Create response
