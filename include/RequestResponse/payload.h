@@ -10,6 +10,7 @@ class Payload {
   public:
     enum Type {
         UNKNOWN,
+        GENERIC_RESPONSE,
         REGISTRATION,
         DISCOVERY_REQUEST,
         DISCOVERY_RESPONSE,

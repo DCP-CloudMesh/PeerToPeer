@@ -48,7 +48,12 @@ int Client::setupConn(const char* HOST, const char* PORT,
     return 0;
 }
 
-int Client::sendRequest(const char* data) {
+int Client::setupConn(const IpAddress& ipAddress, const char* CONNTYPE) {
+    return setupConn(ipAddress.host.c_str(),
+                     to_string(ipAddress.port).c_str(), CONNTYPE);
+}
+
+int Client::sendMsg(const char* data) {
     // retry if failed 5 times
     bool sent = false;
     for (int i = 0; i < 5; i++) {

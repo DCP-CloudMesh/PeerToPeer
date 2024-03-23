@@ -8,7 +8,6 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    // const char* host = "";
     const char* port = "8080";
     string uuid = "1";
 
@@ -20,9 +19,6 @@ int main(int argc, char* argv[]) {
     if (strcmp(port, "8081")) {
         uuid = "2";
     }
-
-    // BootstrapNode bootstrap
-    vector<int> trainingData{2, 1, 4, 3, 6, 5, 9, 7, 8, 10};
 
 #if defined(BOOTSTRAP)
     cout << "Running as bootstrap node on port " << port << "." << endl;
@@ -43,6 +39,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (requestType == "c") {
+        vector<int> trainingData{2, 1, 4, 3, 6, 5, 9, 7, 8, 10};
         TaskRequest request = TaskRequest(1, trainingData); // just one provider
         r.setTaskRequest(request);
         // sends the task request to the leader and provider peers

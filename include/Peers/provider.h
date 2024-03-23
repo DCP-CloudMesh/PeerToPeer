@@ -23,6 +23,8 @@ class Provider : public Peer {
 
     void registerWithBootstrap();
     void listen();
+    void leaderHandleTaskRequest(const IpAddress& requesterIpAddr);
+    void followerHandleTaskRequest();
     void processData();
     void processWorkload(); // worker function to manipulate the TaskRequest
     TaskResponse aggregateResults(std::vector<std::vector<int>> followerData);

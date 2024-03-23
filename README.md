@@ -2,13 +2,13 @@
 
 ## Compilation
 
-To compile both **PROVIDER** and **REQUESTER**, run the following commands:
+To compile **BOOTSTRAP**, **PROVIDER**, and **REQUESTER**, run the following commands:
 `cmake -DLOCAL=0 .`
 `cmake --build .`
 
 ## Compilation (Local)
 
-To compile both **PROVIDER** and **REQUESTER** locally, run the following commands:
+To compile **BOOTSTRAP**, **PROVIDER**, and **REQUESTER** locally, run the following commands:
 `cmake -DLOCAL=1 .`
 `cmake --build .`
 
@@ -24,7 +24,7 @@ To execute, run the following commands:
 ### Requester
 `./bin/requester [8080 [r | c]]`\
 `8080` is the default port, optional parameter\
-`r` is an optional parameter to request to receive the result of the computation
+`r` is an optional parameter to request to receive the result of the computation (use same port as original request execution)
 `c` is an optional parameter to request to provide the computation
 ## Clean
 
