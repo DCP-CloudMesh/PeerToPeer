@@ -112,11 +112,13 @@ void Requester::divideTask() {
 void Requester::sendTaskRequest() {
     // Ensure connected to sufficient number of provider peers
     unsigned int numRequestedWorkers = taskRequests[0].getNumWorkers();
-    while (providerPeers.size() < numRequestedWorkers) {
+    while (true) {
         cout << "Insufficient number of connected provider peers" << endl
              << "Sending out discovery request..." << endl;
         sendDiscoveryRequest(numRequestedWorkers);
         waitForDiscoveryResponse();
+        if (providerPeers.size() >= numRequestedWorkers) break;
+        sleep(5);
     }
 
     // Set task leader and followers
