@@ -21,6 +21,38 @@ void TaskRequest::setTrainingData(const vector<int>& trainingData) {
     this->trainingData = trainingData;
 }
 
+void TaskRequest::setTrainingFile(const string& trainingFile) {
+    this->trainingFile = trainingFile;
+}
+
+void TaskRequest::setTrainingDataFromFile() {
+    ifstream file(trainingFile);
+    if (!file.is_open()) {
+        cerr << "Error opening file: " << trainingFile << endl;
+        return;
+    }
+
+    trainingData.clear(); // Clear existing data
+    string line;
+    while (getline(file, line)) {
+        trainingData.push_back(stoi(line));
+    }
+    file.close();
+}
+
+void TaskRequest::createTrainingFile(const string& newTrainingFileName) {
+    ofstream file(newTrainingFileName);
+    if (!file.is_open()) {
+        cerr << "Error opening file: " << newTrainingFileName << endl;
+        return;
+    }
+
+    for (int i = 0; i < trainingData.size(); i++) {
+        file << trainingData[i] << "\n";
+    }
+    file.close();
+}
+
 unsigned int TaskRequest::getNumWorkers() const { return numWorkers; }
 
 vector<int> TaskRequest::getTrainingData() const { return trainingData; }
@@ -31,6 +63,8 @@ AddressTable TaskRequest::getAssignedWorkers() const {
     return assignedWorkers;
 }
 
+string TaskRequest::getTrainingFile() const { return trainingFile; }
+
 string TaskRequest::serialize() const {
     json j;
     j["numWorkers"] = numWorkers;
@@ -40,6 +74,7 @@ string TaskRequest::serialize() const {
         j["assignedWorkers"][entry.first] = serializeIpAddress(entry.second);
     }
     j["trainingData"] = trainingData;
+    j["trainingFile"] = trainingFile;
     return j.dump();
 }
 
@@ -49,6 +84,7 @@ void TaskRequest::deserialize(const string& serializedData) {
         numWorkers = j["numWorkers"].get<unsigned int>();
         leaderUuid = j["leaderUuid"].get<string>();
         trainingData = j["trainingData"].get<vector<int>>();
+        trainingFile = j["trainingFile"].get<string>();
 
         assignedWorkers.clear(); // Clear existing data
         auto workersJson = j["assignedWorkers"];

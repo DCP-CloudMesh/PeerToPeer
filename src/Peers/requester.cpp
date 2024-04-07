@@ -90,6 +90,7 @@ void Requester::divideTask() {
         }
 
         TaskRequest subtaskRequest = TaskRequest(1, subtaskData);
+        subtaskRequest.createTrainingFile("subtaskData_" + std::to_string(i) + ".txt"); // FTP
         subtaskRequest.setLeaderUuid(leaderUuid);
         subtaskRequest.setAssignedWorkers(assignedWorkers);
         taskRequests.push_back(subtaskRequest);
@@ -103,6 +104,7 @@ void Requester::divideTask() {
         }
 
         TaskRequest subtaskRequest = TaskRequest(1, subtaskData);
+        subtaskRequest.createTrainingFile("subtaskData_" + std::to_string(numSubtasks) + ".txt"); // FTP
         subtaskRequest.setLeaderUuid(queuedTask.getLeaderUuid());
         subtaskRequest.setAssignedWorkers(queuedTask.getAssignedWorkers());
         taskRequests.push_back(subtaskRequest);

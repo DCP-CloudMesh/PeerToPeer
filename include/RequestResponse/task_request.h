@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include "payload.h"
 #include "../utility.h"
@@ -12,6 +13,7 @@ class TaskRequest : public Payload {
     std::string leaderUuid;
     AddressTable assignedWorkers;
     std::vector<int> trainingData;
+    std::string trainingFile;
 
   public:
     TaskRequest();
@@ -21,11 +23,16 @@ class TaskRequest : public Payload {
     void setLeaderUuid(const std::string& leaderUuid);
     void setAssignedWorkers(const AddressTable& assignedWorkers);
     void setTrainingData(const std::vector<int>& trainingData);
+    void setTrainingFile(const std::string& trainingFile);
+    void setTrainingDataFromFile();
+
+    void createTrainingFile(const std::string& newTrainingFileName);
 
     unsigned int getNumWorkers() const;
     std::vector<int> getTrainingData() const;
     std::string getLeaderUuid() const;
     AddressTable getAssignedWorkers() const;
+    std::string getTrainingFile() const;
 
     std::string serialize() const override;
     void deserialize(const std::string& serializedData) override;

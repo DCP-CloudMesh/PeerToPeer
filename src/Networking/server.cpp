@@ -82,6 +82,50 @@ void Server::replyToConn(string message) {
     send(activeConn, reply, strlen(reply), 0);
 }
 
+void Server::getFileFTP(string message) {
+    const char* fileName = message.c_str();
+    const char* reply = 'get ' + fileName;
+    send(activeConn, reply, strlen(reply), 0);
+
+    char port[MAXLINE], buffer[MAXLINE], char_num_blks[MAXLINE], char_num_last_blk[MAXLINE], msg[MAXLINE];
+    int data_port, datasock, lSize, num_blks, num_last_blk, i;
+    FILE *fp;
+    recv(activeConn, port, MAXLINE, 0);
+    data_port = atoi(port);
+    datasock = FTP_create_socket_client(data_port, PORT);
+    recv(activeConn, msg, MAXLINE, 0);
+    if (strcmp("nxt", msg) == 0)
+    {
+        if ((fp = fopen(fileName, "w")) == NULL)
+            cout << "Error in creating file\n";
+        else
+        {
+            recv(activeConn, char_num_blks, MAXLINE, 0);
+            num_blks = atoi(char_num_blks);
+            for (i = 0; i < num_blks; i++)
+            {
+                recv(datasock, buffer, MAXLINE, 0);
+                fwrite(buffer, sizeof(char), MAXLINE, fp);
+                // cout<<buffer<<endl;
+            }
+            recv(activeConn, char_num_last_blk, MAXLINE, 0);
+            num_last_blk = atoi(char_num_last_blk);
+            if (num_last_blk > 0)
+            {
+                recv(datasock, buffer, MAXLINE, 0);
+                fwrite(buffer, sizeof(char), num_last_blk, fp);
+                // cout<<buffer<<endl;
+            }
+            fclose(fp);
+            cout << "File download done." << endl;
+        }
+    }
+    else
+    {
+        cerr << "Error in opening file. Check filename\nUsage: put filename" << endl;
+    }
+}
+
 void Server::closeConn() { close(activeConn); }
 
 Server::~Server() {
