@@ -84,7 +84,8 @@ void Server::replyToConn(string message) {
 
 void Server::getFileFTP(string message) {
     const char* fileName = message.c_str();
-    const char* reply = 'get ' + fileName;
+    const char* reply = ("get " + message).c_str();
+    cout << "FTP: sending request " << reply << endl;
     send(activeConn, reply, strlen(reply), 0);
 
     char port[MAXLINE], buffer[MAXLINE], char_num_blks[MAXLINE], char_num_last_blk[MAXLINE], msg[MAXLINE];

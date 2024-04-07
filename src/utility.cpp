@@ -131,7 +131,10 @@ string vectorToString(vector<int> vec) {
 }
 
 int FTP_create_socket_client(int port, const char *addr)
-{
+{   
+    cout << "Creating FTP client socket " << port << " on " << addr << endl;
+
+    const char *hardcodedAddr = "127.0.0.1";
 	int sockfd;
 	struct sockaddr_in servaddr;
 
@@ -146,7 +149,7 @@ int FTP_create_socket_client(int port, const char *addr)
 	// Creation of the socket
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr(addr);
+	servaddr.sin_addr.s_addr = inet_addr(hardcodedAddr);
 	servaddr.sin_port = htons(port); // convert to big-endian order
 
 	// Connection of the client to the socket
@@ -162,6 +165,7 @@ int FTP_create_socket_client(int port, const char *addr)
 
 int FTP_create_socket_server(int port)
 {
+     cout << "Creating FTP server socket " << port << endl;
 	int listenfd;
 	struct sockaddr_in dataservaddr;
 

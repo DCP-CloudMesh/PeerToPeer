@@ -51,6 +51,8 @@ void TaskRequest::createTrainingFile(const string& newTrainingFileName) {
         file << trainingData[i] << "\n";
     }
     file.close();
+
+    trainingFile = newTrainingFileName;
 }
 
 unsigned int TaskRequest::getNumWorkers() const { return numWorkers; }
