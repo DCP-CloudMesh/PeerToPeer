@@ -36,10 +36,8 @@ void Provider::registerWithBootstrap() {
 void Provider::listen() {
     while (true) {
         cout << "Waiting for requester to connect..." << endl;
-        bool connStatus = server->acceptConn();
-        if (!connStatus) {
-            continue;
-        }
+        if (!server->acceptConn()) continue;
+
         // receive task request object from client
         string requesterData = server->receiveFromConn();
         Message requesterMsg;
@@ -71,7 +69,7 @@ void Provider::listen() {
                     task->getAssignedWorkers().size() - 1) {
                 cout << endl;
                 cout << "Waiting for follower peer to connect..." << endl;
-                bool connStatus = server->acceptConn();
+                server->acceptConn();
                 // get data from followers and aggregate
                 string followerMsgStr = server->receiveFromConn();
                 Message followerMsg;
