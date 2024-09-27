@@ -88,31 +88,31 @@ void Server::getFileFTP(string message) {
     cout << "FTP: sending request \"" << reply << "\"" << endl;
     send(activeConn, reply, strlen(reply), 0);
 
-    char port[MAXLINE], buffer[MAXLINE], char_num_blks[MAXLINE], char_num_last_blk[MAXLINE], msg[MAXLINE];
+    char port[FTP_BUFFER_SIZE], buffer[FTP_BUFFER_SIZE], char_num_blks[FTP_BUFFER_SIZE], char_num_last_blk[FTP_BUFFER_SIZE], msg[FTP_BUFFER_SIZE];
     int data_port, datasock, lSize, num_blks, num_last_blk, i;
     FILE *fp;
-    recv(activeConn, port, MAXLINE, 0);
+    recv(activeConn, port, FTP_BUFFER_SIZE, 0);
     data_port = atoi(port);
     datasock = FTP_create_socket_client(data_port, PORT);
-    recv(activeConn, msg, MAXLINE, 0);
+    recv(activeConn, msg, FTP_BUFFER_SIZE, 0);
     if (strcmp("nxt", msg) == 0)
     {
         if ((fp = fopen(fileName, "w")) == NULL)
             cout << "FTP: Error in creating file\n";
         else
         {
-            recv(activeConn, char_num_blks, MAXLINE, 0);
+            recv(activeConn, char_num_blks, FTP_BUFFER_SIZE, 0);
             num_blks = atoi(char_num_blks);
             for (i = 0; i < num_blks; i++)
             {
-                recv(datasock, buffer, MAXLINE, 0);
-                fwrite(buffer, sizeof(char), MAXLINE, fp);
+                recv(datasock, buffer, FTP_BUFFER_SIZE, 0);
+                fwrite(buffer, sizeof(char), FTP_BUFFER_SIZE, fp);
             }
-            recv(activeConn, char_num_last_blk, MAXLINE, 0);
+            recv(activeConn, char_num_last_blk, FTP_BUFFER_SIZE, 0);
             num_last_blk = atoi(char_num_last_blk);
             if (num_last_blk > 0)
             {
-                recv(datasock, buffer, MAXLINE, 0);
+                recv(datasock, buffer, FTP_BUFFER_SIZE, 0);
                 fwrite(buffer, sizeof(char), num_last_blk, fp);
             }
             fclose(fp);

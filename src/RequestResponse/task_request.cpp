@@ -4,10 +4,20 @@ using namespace std;
 using namespace nlohmann;
 
 TaskRequest::TaskRequest() : Payload(Type::TASK_REQUEST) {}
+
 TaskRequest::TaskRequest(const unsigned int numWorkers,
                          const vector<int>& trainingData)
     : Payload(Type::TASK_REQUEST), numWorkers{numWorkers},
       trainingData{trainingData} {}
+
+TaskRequest::TaskRequest(const unsigned int numWorkers,
+                         const std::vector<int>& trainingData,
+                         const std::string& trainingFile)
+    : Payload(Type::TASK_REQUEST), numWorkers{numWorkers},
+      trainingData{trainingData}, trainingFile{trainingFile} {
+
+    createTrainingFile();
+}
 
 void TaskRequest::setLeaderUuid(const string& leaderUuid) {
     this->leaderUuid = leaderUuid;
@@ -40,19 +50,17 @@ void TaskRequest::setTrainingDataFromFile() {
     file.close();
 }
 
-void TaskRequest::createTrainingFile(const string& newTrainingFileName) {
-    ofstream file(newTrainingFileName);
+void TaskRequest::createTrainingFile() {
+    ofstream file(trainingFile);
     if (!file.is_open()) {
-        cerr << "Error opening file: " << newTrainingFileName << endl;
+        cerr << "Error opening file: " << trainingFile << endl;
         return;
-    }
+}
 
     for (int i = 0; i < trainingData.size(); i++) {
         file << trainingData[i] << "\n";
     }
     file.close();
-
-    trainingFile = newTrainingFileName;
 }
 
 unsigned int TaskRequest::getNumWorkers() const { return numWorkers; }
@@ -61,9 +69,7 @@ vector<int> TaskRequest::getTrainingData() const { return trainingData; }
 
 string TaskRequest::getLeaderUuid() const { return leaderUuid; }
 
-AddressTable TaskRequest::getAssignedWorkers() const {
-    return assignedWorkers;
-}
+AddressTable TaskRequest::getAssignedWorkers() const { return assignedWorkers; }
 
 string TaskRequest::getTrainingFile() const { return trainingFile; }
 

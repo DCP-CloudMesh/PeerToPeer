@@ -1,20 +1,24 @@
 #ifndef __UTILITY__
 #define __UTILITY__
 
+#include <arpa/inet.h>
 #include <iostream>
+#include <netinet/in.h>
 #include <random>
 #include <sstream>
-#include <string>
-#include <unordered_map>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <arpa/inet.h>
+#include <stdlib.h>
+#include <string>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <unordered_map>
 
-#define MAXLINE 4096 /*max text line length*/
+/*
+ * Defines the universal buffer size used in FTP. Packets are transferred
+ * blocks of bytes limited to the specified size.
+ */
+#define FTP_BUFFER_SIZE 4096 //
 
 struct IpAddress {
     std::string host;
@@ -46,7 +50,7 @@ std::string startNgrokForwarding(unsigned short port);
 
 std::string vectorToString(std::vector<int> v);
 
-int FTP_create_socket_client(int port, const char *addr);
+int FTP_create_socket_client(int port, const char* addr);
 
 int FTP_create_socket_server(int port);
 
