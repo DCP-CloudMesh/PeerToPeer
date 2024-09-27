@@ -132,9 +132,9 @@ string vectorToString(vector<int> vec) {
 
 int FTP_create_socket_client(int port, const char *addr)
 {   
-    cout << "Creating FTP client socket " << port << " on " << addr << endl;
+    cout << "FTP: Creating FTP client socket " << port << " on " << addr << endl;
 
-    const char *hardcodedAddr = "127.0.0.1";
+    const char *localhost = "127.0.0.1";
 	int sockfd;
 	struct sockaddr_in servaddr;
 
@@ -142,20 +142,20 @@ int FTP_create_socket_client(int port, const char *addr)
 	// If sockfd<0 there was an error in the creation of the socket
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		cerr << "Problem in creating the socket" << endl;
+		cerr << "FTP: Problem in creating the socket" << endl;
 		exit(2);
 	}
 
 	// Creation of the socket
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr(hardcodedAddr);
+	servaddr.sin_addr.s_addr = inet_addr(localhost);
 	servaddr.sin_port = htons(port); // convert to big-endian order
 
 	// Connection of the client to the socket
 	if (connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
 	{
-		cerr << "Problem in creating data channel" << endl;
+		cerr << "FTP: Problem in creating data channel" << endl;
 		exit(3);
 	}
 
@@ -165,7 +165,7 @@ int FTP_create_socket_client(int port, const char *addr)
 
 int FTP_create_socket_server(int port)
 {
-     cout << "Creating FTP server socket " << port << endl;
+     cout << "FTP: Creating FTP server socket " << port << endl;
 	int listenfd;
 	struct sockaddr_in dataservaddr;
 
@@ -173,7 +173,7 @@ int FTP_create_socket_server(int port)
 	// If sockfd<0 there was an error in the creation of the socket
 	if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		cerr << "Problem in creating the data socket" << endl;
+		cerr << "FTP: Problem in creating the data socket" << endl;
 		exit(2);
 	}
 
@@ -184,7 +184,7 @@ int FTP_create_socket_server(int port)
 
 	if ((::bind(listenfd, (struct sockaddr *)&dataservaddr, sizeof(dataservaddr))) < 0)
 	{
-		cerr << "Problem in binding the data socket" << endl;
+		cerr << "FTP: Problem in binding the data socket" << endl;
 		exit(2);
 	}
 
@@ -204,7 +204,7 @@ int FTP_accept_conn(int sock)
 	// accept a connection
 	if ((dataconnfd = accept(sock, (struct sockaddr *)&datacliaddr, &dataclilen)) < 0)
 	{
-		cerr << "Problem in accepting the data socket" << endl;
+		cerr << "FTP: Problem in accepting the data socket" << endl;
 		exit(2);
 	}
 

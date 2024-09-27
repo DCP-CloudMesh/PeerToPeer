@@ -58,18 +58,18 @@ void Provider::listen() {
         task = make_unique<TaskRequest>(std::move(*taskReq));
 
         if (task->getTrainingFile().empty()) {
-            // if training file is empty, then deserialize the training data
+            // if training file is not set, then we continue assuming the trainingData field has been set
             server->replyToConn("Provider ID: " + uuid +
                                 " : Deserialized "
                                 "task request. Now processing workload.\n");
             server->closeConn();
         } else {
             // if training file is not empty, then download the training file
-            // from the requester
+            // from the requester and set the trainingData field from the file
             cout << "FTP: requesting " << task->getTrainingFile() << endl;
             server->getFileFTP(task->getTrainingFile());
 
-            // add the training data in file to task
+            // add the training data from the file fetched
             task->setTrainingDataFromFile();
 
             server->closeConn();

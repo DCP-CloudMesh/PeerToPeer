@@ -85,7 +85,7 @@ void Server::replyToConn(string message) {
 void Server::getFileFTP(string message) {
     const char* fileName = message.c_str();
     const char* reply = ("get " + message).c_str();
-    cout << "FTP: sending request " << reply << endl;
+    cout << "FTP: sending request \"" << reply << "\"" << endl;
     send(activeConn, reply, strlen(reply), 0);
 
     char port[MAXLINE], buffer[MAXLINE], char_num_blks[MAXLINE], char_num_last_blk[MAXLINE], msg[MAXLINE];
@@ -98,7 +98,7 @@ void Server::getFileFTP(string message) {
     if (strcmp("nxt", msg) == 0)
     {
         if ((fp = fopen(fileName, "w")) == NULL)
-            cout << "Error in creating file\n";
+            cout << "FTP: Error in creating file\n";
         else
         {
             recv(activeConn, char_num_blks, MAXLINE, 0);
@@ -107,7 +107,6 @@ void Server::getFileFTP(string message) {
             {
                 recv(datasock, buffer, MAXLINE, 0);
                 fwrite(buffer, sizeof(char), MAXLINE, fp);
-                // cout<<buffer<<endl;
             }
             recv(activeConn, char_num_last_blk, MAXLINE, 0);
             num_last_blk = atoi(char_num_last_blk);
@@ -115,15 +114,14 @@ void Server::getFileFTP(string message) {
             {
                 recv(datasock, buffer, MAXLINE, 0);
                 fwrite(buffer, sizeof(char), num_last_blk, fp);
-                // cout<<buffer<<endl;
             }
             fclose(fp);
-            cout << "File download done." << endl;
+            cout << "FTP: File download done." << endl;
         }
     }
     else
     {
-        cerr << "Error in opening file. Check filename\nUsage: put filename" << endl;
+        cerr << "FTP: Error in opening file. Check filename\nUsage: put filename" << endl;
     }
 }
 

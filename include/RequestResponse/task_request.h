@@ -12,7 +12,10 @@ class TaskRequest : public Payload {
     unsigned int numWorkers;
     std::string leaderUuid;
     AddressTable assignedWorkers;
+    // A task request can have the training data as an array of integers
     std::vector<int> trainingData;
+    // A task request can have the training data as a string that 
+    // specifies the name of the training file on the local filesystem
     std::string trainingFile;
 
   public:

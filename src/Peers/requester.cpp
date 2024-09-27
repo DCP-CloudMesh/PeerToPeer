@@ -90,6 +90,13 @@ void Requester::divideTask() {
         }
 
         TaskRequest subtaskRequest = TaskRequest(1, subtaskData);
+        /* 
+        * We use FTP to send the training data. This is necessary if the training data is large or cannot be 
+        * easily serialized into an in memory object (i.e. vector). 
+        * 
+        * In this simple case, we create a temporary file to hold the training data and demonstrate
+        * using FTP.
+        */
         subtaskRequest.createTrainingFile("subtaskData_" + std::to_string(i) + ".txt"); // FTP
         cout << "FTP: Created file " << subtaskRequest.getTrainingFile() << endl;
         subtaskRequest.setLeaderUuid(leaderUuid);
@@ -98,6 +105,7 @@ void Requester::divideTask() {
     }
 
     // add the remainder to the last subtask
+    // TODO: this implementation looks wrong. Should add to last subtask instead of creating a new one.
     if (remainder != 0) {
         vector<int> subtaskData;
         for (int i = 0; i < remainder; i++) {

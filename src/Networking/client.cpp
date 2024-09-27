@@ -73,7 +73,11 @@ int Client::sendRequest(const char* data) {
     }
     cout << "Client Received: " << string(buffer, mLen) << endl;
 
-    // FTP (draft)
+    /*
+     * If the request received contains the keyword "get", which is used to
+     * represent a file transfer request, the client will proceed to provide the
+     * file.
+     */
     char *token, *dummy;
     dummy = buffer;
     token = strtok(dummy, " ");
@@ -84,12 +88,12 @@ int Client::sendRequest(const char* data) {
         int datasock, lSize, num_blks, num_last_blk, i;
         FILE* fp;
         token = strtok(NULL, " \n");
-        cout << "Filename given is: " << token << endl;
+        cout << "FTP: Filename given is: " << token << endl;
         int data_port = 1024;
         sprintf(port, "%d", data_port);
-        datasock =
-            FTP_create_socket_server(data_port);     // creating socket for data connection
-        send(CONN, port, MAXLINE, 0);   // sending port no. to client
+        datasock = FTP_create_socket_server(
+            data_port);               // creating socket for data connection
+        send(CONN, port, MAXLINE, 0); // sending port no. to client
         datasock = FTP_accept_conn(datasock); // accepting connnection by client
         if ((fp = fopen(token, "r")) != NULL) {
             // size of file
@@ -106,17 +110,15 @@ int Client::sendRequest(const char* data) {
             for (i = 0; i < num_blks; i++) {
                 fread(buffer, sizeof(char), MAXLINE, fp);
                 send(datasock, buffer, MAXLINE, 0);
-                // cout<<buffer<<"	"<<i<<endl;
             }
             sprintf(char_num_last_blk, "%d", num_last_blk);
             send(CONN, char_num_last_blk, MAXLINE, 0);
             if (num_last_blk > 0) {
                 fread(buffer, sizeof(char), num_last_blk, fp);
                 send(datasock, buffer, MAXLINE, 0);
-                // cout<<buffer<<endl;
             }
             fclose(fp);
-            cout << "File upload done.\n";
+            cout << "FTP: File upload done.\n";
         } else {
             send(CONN, "0", MAXLINE, 0);
         }
