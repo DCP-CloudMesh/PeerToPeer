@@ -1,32 +1,72 @@
 # CloudMesh
 
+## Dependencies
+Follow this to install bazel - https://bazel.build/install
+
+## Key Files -
+- BUILD file - Contains the build instructions for the targets.
+- MODULE.bazel file - Contains the module name and the dependencies.
+
 ## Compilation
 
 To compile **BOOTSTRAP**, **PROVIDER** and **REQUESTER**, run the following commands:
-`cmake -DLOCAL=0 .`
-`cmake --build .`
+```
+bazel build //...
+```
 
 ## Compilation (Local)
 
 To compile **BOOTSTRAP**, **PROVIDER** and **REQUESTER** locally, run the following commands:
-`cmake -DLOCAL=1 .`
-`cmake --build .`
+```
+bazel build //... --define local=true
+```
 
 ## Execution
 
 To execute, run the following commands:
 ### Bootstrap
-`./bin/bootstrap` (8080 is reserved for bootstrap port so peers know where to connect)
+```
+./bazel-bin/bootstrap
+```
+(8080 is reserved for bootstrap port so peers know where to connect)
 
 ### Provider
-`./bin/provider [8080]` (8080 is the default port, optional parameter)
+```
+./bazel-bin/provider [8080]
+``` 
+(8080 is the default port, optional parameter)
 
 ### Requester
-`./bin/requester [8080 [r | c]]`\
+```
+./bazel-bin/requester [8080 [r | c]]
+```
 `8080` is the default port, optional parameter\
 `r` is an optional parameter to request to receive the result of the computation
 `c` is an optional parameter to request to provide the computation
 ## Clean
 
-To clean, run the following commands:
-`make clean`
+## To clean the build files:
+```
+bazel clean
+```
+
+## How to add a new external dependency
+Add the external dependency in MODULE.bazel file. This will now be visible to all the targets in the module.\
+For example: 
+```
+http_archive(
+    name = "com_github_nlohmann_json",
+    urls = ["https://github.com/nlohmann/json/archive/v3.11.3.tar.gz"],
+    sha256 = "0d8ef5af7f9794e3263480193c491549b2ba6cc74bb018906202ada498a79406",
+    strip_prefix = "json-3.11.3",
+)
+```
+
+
+## VSCode Include Path (to get rid of red squiggly lines)
+To include the dependency build files in VSCode, add the following to the includePath for Cpp:
+```json
+"C_Cpp.default.includePath": [
+  "${workspaceFolder}/bazel-PeerToPeer/external/{your_target_directory}"
+]
+```
