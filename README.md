@@ -30,3 +30,10 @@ To execute, run the following commands:
 
 To clean, run the following commands:
 `make clean`
+
+
+## Issues
+
+**If encountering a problem with xcode c++ compiler:**
+Run the following to change the compiler used by cmake.
+`cmake -Bbuild -H. -DCMAKE_CXX_COMPILER=/usr/bin/clang++`

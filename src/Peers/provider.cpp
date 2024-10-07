@@ -50,14 +50,28 @@ void Provider::listen() {
             continue;
         }
 
-        server->replyToConn("Provider (" + uuid + ") - "
-                            "Received task request.");
+        // FTP
         shared_ptr<TaskRequest> taskReq =
             static_pointer_cast<TaskRequest>(requesterPayload);
         task = make_unique<TaskRequest>(std::move(*taskReq));
-        server->replyToConn("Provider ID: " + uuid + " : Deserialized "
-                            "task request. Now processing workload.\n");
-        server->closeConn();
+
+        if (task->getTrainingFile().empty()) {
+            // if training file is not set, then we continue assuming the trainingData field has been set
+            server->replyToConn("Provider ID: " + uuid +
+                                " : Deserialized "
+                                "task request. Now processing workload.\n");
+            server->closeConn();
+        } else {
+            // if training file is not empty, then download the training file
+            // from the requester and set the trainingData field from the file
+            cout << "FTP: requesting " << task->getTrainingFile() << endl;
+            server->getFileFTP(task->getTrainingFile());
+
+            // add the training data from the file fetched
+            task->setTrainingDataFromFile();
+
+            server->closeConn();
+        }
 
         // Run processWorkload() in a separate thread
         thread workloadThread(&Provider::processWorkload, this);

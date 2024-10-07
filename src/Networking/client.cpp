@@ -15,16 +15,14 @@ int Client::setupConn(const char* HOST, const char* PORT,
     hints.ai_socktype = SOCK_STREAM;
 
     if (getaddrinfo(HOST, PORT, &hints, &serverInfo) != 0) {
-        cerr << "Error getting address info: " << gai_strerror(errno)
-             << endl;
+        cerr << "Error getting address info: " << gai_strerror(errno) << endl;
         return 1;
     }
 
     for (auto addr = serverInfo; addr != nullptr; addr = addr->ai_next) {
         CONN = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
         if (CONN == -1) {
-            cerr << "Error creating socket: " << strerror(errno)
-                 << endl;
+            cerr << "Error creating socket: " << strerror(errno) << endl;
             continue;
         }
 
@@ -74,6 +72,58 @@ int Client::sendRequest(const char* data) {
         return 1;
     }
     cout << "Client Received: " << string(buffer, mLen) << endl;
+
+    /*
+     * If the request received contains the keyword "get", which is used to
+     * represent a file transfer request, the client will proceed to provide the
+     * file.
+     */
+    char *token, *dummy;
+    dummy = buffer;
+    token = strtok(dummy, " ");
+    // process file descriptor
+    if (strcmp("get", token) == 0) {
+        char port[FTP_BUFFER_SIZE], buffer[FTP_BUFFER_SIZE], char_num_blks[FTP_BUFFER_SIZE],
+            char_num_last_blk[FTP_BUFFER_SIZE];
+        int datasock, lSize, num_blks, num_last_blk, i;
+        FILE* fp;
+        token = strtok(NULL, " \n");
+        cout << "FTP: Filename given is: " << token << endl;
+        int data_port = 1024;
+        sprintf(port, "%d", data_port);
+        datasock = FTP_create_socket_server(
+            data_port);               // creating socket for data connection
+        send(CONN, port, FTP_BUFFER_SIZE, 0); // sending port no. to client
+        datasock = FTP_accept_conn(datasock); // accepting connnection by client
+        if ((fp = fopen(token, "r")) != NULL) {
+            // size of file
+            send(CONN, "nxt", FTP_BUFFER_SIZE, 0);
+            fseek(fp, 0, SEEK_END);
+            lSize = ftell(fp);
+            rewind(fp);
+            num_blks = lSize / FTP_BUFFER_SIZE;
+            num_last_blk = lSize % FTP_BUFFER_SIZE;
+            sprintf(char_num_blks, "%d", num_blks);
+            send(CONN, char_num_blks, FTP_BUFFER_SIZE, 0);
+            // cout<<num_blks<<"	"<<num_last_blk<<endl;
+
+            for (i = 0; i < num_blks; i++) {
+                fread(buffer, sizeof(char), FTP_BUFFER_SIZE, fp);
+                send(datasock, buffer, FTP_BUFFER_SIZE, 0);
+            }
+            sprintf(char_num_last_blk, "%d", num_last_blk);
+            send(CONN, char_num_last_blk, FTP_BUFFER_SIZE, 0);
+            if (num_last_blk > 0) {
+                fread(buffer, sizeof(char), num_last_blk, fp);
+                send(datasock, buffer, FTP_BUFFER_SIZE, 0);
+            }
+            fclose(fp);
+            cout << "FTP: File upload done.\n";
+        } else {
+            send(CONN, "0", FTP_BUFFER_SIZE, 0);
+        }
+    }
+
     close(CONN);
     return 0;
 }

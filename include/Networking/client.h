@@ -1,6 +1,7 @@
 #ifndef _CLIENT_H
 #define _CLIENT_H
 
+#include "../utility.h"
 #include <arpa/inet.h>
 #include <cstring>
 #include <iostream>

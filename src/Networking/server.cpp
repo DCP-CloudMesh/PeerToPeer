@@ -82,6 +82,49 @@ void Server::replyToConn(string message) {
     send(activeConn, reply, strlen(reply), 0);
 }
 
+void Server::getFileFTP(string message) {
+    const char* fileName = message.c_str();
+    const char* reply = ("get " + message).c_str();
+    cout << "FTP: sending request \"" << reply << "\"" << endl;
+    send(activeConn, reply, strlen(reply), 0);
+
+    char port[FTP_BUFFER_SIZE], buffer[FTP_BUFFER_SIZE], char_num_blks[FTP_BUFFER_SIZE], char_num_last_blk[FTP_BUFFER_SIZE], msg[FTP_BUFFER_SIZE];
+    int data_port, datasock, lSize, num_blks, num_last_blk, i;
+    FILE *fp;
+    recv(activeConn, port, FTP_BUFFER_SIZE, 0);
+    data_port = atoi(port);
+    datasock = FTP_create_socket_client(data_port, PORT);
+    recv(activeConn, msg, FTP_BUFFER_SIZE, 0);
+    if (strcmp("nxt", msg) == 0)
+    {
+        if ((fp = fopen(fileName, "w")) == NULL)
+            cout << "FTP: Error in creating file\n";
+        else
+        {
+            recv(activeConn, char_num_blks, FTP_BUFFER_SIZE, 0);
+            num_blks = atoi(char_num_blks);
+            for (i = 0; i < num_blks; i++)
+            {
+                recv(datasock, buffer, FTP_BUFFER_SIZE, 0);
+                fwrite(buffer, sizeof(char), FTP_BUFFER_SIZE, fp);
+            }
+            recv(activeConn, char_num_last_blk, FTP_BUFFER_SIZE, 0);
+            num_last_blk = atoi(char_num_last_blk);
+            if (num_last_blk > 0)
+            {
+                recv(datasock, buffer, FTP_BUFFER_SIZE, 0);
+                fwrite(buffer, sizeof(char), num_last_blk, fp);
+            }
+            fclose(fp);
+            cout << "FTP: File download done." << endl;
+        }
+    }
+    else
+    {
+        cerr << "FTP: Error in opening file. Check filename\nUsage: put filename" << endl;
+    }
+}
+
 void Server::closeConn() { close(activeConn); }
 
 Server::~Server() {

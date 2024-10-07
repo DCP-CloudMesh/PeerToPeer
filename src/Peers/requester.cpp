@@ -89,20 +89,30 @@ void Requester::divideTask() {
             subtaskData.push_back(trainingData[i * subtaskSize + j]);
         }
 
-        TaskRequest subtaskRequest = TaskRequest(1, subtaskData);
+        TaskRequest subtaskRequest = TaskRequest(1, subtaskData, "subtaskData_" + std::to_string(i) + ".txt");
+        /* 
+        * We use FTP to send the training data. This is necessary if the training data is large or cannot be 
+        * easily serialized into an in memory object (i.e. vector). 
+        * 
+        * In this simple case, we create a temporary file to hold the training data and demonstrate
+        * using FTP.
+        */
+        cout << "FTP: Created file " << subtaskRequest.getTrainingFile() << endl;
         subtaskRequest.setLeaderUuid(leaderUuid);
         subtaskRequest.setAssignedWorkers(assignedWorkers);
         taskRequests.push_back(subtaskRequest);
     }
 
     // add the remainder to the last subtask
+    // TODO: this implementation looks wrong. Should add to last subtask instead of creating a new one.
     if (remainder != 0) {
         vector<int> subtaskData;
         for (int i = 0; i < remainder; i++) {
             subtaskData.push_back(trainingData[numSubtasks * subtaskSize + i]);
         }
 
-        TaskRequest subtaskRequest = TaskRequest(1, subtaskData);
+        TaskRequest subtaskRequest = TaskRequest(1, subtaskData, "subtaskData_" + std::to_string(numSubtasks) + ".txt");
+        cout << "FTP: Created file " << subtaskRequest.getTrainingFile() << endl;
         subtaskRequest.setLeaderUuid(queuedTask.getLeaderUuid());
         subtaskRequest.setAssignedWorkers(queuedTask.getAssignedWorkers());
         taskRequests.push_back(subtaskRequest);
