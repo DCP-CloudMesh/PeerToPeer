@@ -1,7 +1,9 @@
 #include "../../include/Peers/provider.h"
 #include "../../include/Peers/bootstrap_node.h"
 #include "../../include/RequestResponse/message.h"
+#include "../../include/RequestResponse/acknowledgement.h"
 #include "../../include/RequestResponse/registration.h"
+#include "../../include/RequestResponse/task_request.h"
 #include "../../include/utility.h"
 
 #include <cstdio>
@@ -30,7 +32,7 @@ void Provider::registerWithBootstrap() {
     shared_ptr<Registration> payload = make_shared<Registration>();
     Message msg(uuid, IpAddress(host, port), payload);
 
-    client->sendRequest(msg.serialize().c_str());
+    client->sendMsg(msg.serialize().c_str());
 }
 
 void Provider::listen() {
@@ -73,80 +75,90 @@ void Provider::listen() {
             server->closeConn();
         }
 
-        // Run processWorkload() in a separate thread
-        thread workloadThread(&Provider::processWorkload, this);
         if (task->getLeaderUuid() == uuid) {
-            // if this is the leader, send the result to the requester
-            // send back the result
-            vector<vector<int>> followerData{};
-            while (followerData.size() <
-                    task->getAssignedWorkers().size() - 1) {
-                cout << endl;
-                cout << "Waiting for follower peer to connect..." << endl;
-                server->acceptConn();
-                // get data from followers and aggregate
-                string followerMsgStr = server->receiveFromConn();
-                Message followerMsg;
-                followerMsg.deserialize(followerMsgStr);
-                shared_ptr<Payload> followerPayload = followerMsg.getPayload();
-                
-                if (followerPayload->getType() != Payload::Type::TASK_RESPONSE) {
-                    continue;
-                }
-
-                shared_ptr<TaskResponse> taskResp =
-                    static_pointer_cast<TaskResponse>(followerPayload);
-
-                // append to followerData
-                followerData.push_back(taskResp->getTrainingData());
-                server->replyToConn("Received follower result.");
-                server->closeConn();
-            }
-
-            cout << endl;
-
-            workloadThread.join();
-
-            TaskResponse aggregatedResults = aggregateResults(followerData);
-
-            // send back the result to the requester
-            // get the ip from the bootstrap server
-            // ------------------ hard code for now ------------------
-            // const char* reqHost = requesterIpAddr.host.c_str();
-            // const char* reqPort = to_string(requesterIpAddr.port).c_str();
-            const char* reqHost = "127.0.0.1";
-            const char* reqPort = "8082";
-
-            shared_ptr<TaskResponse> aggregatePayload =
-                make_shared<TaskResponse>(aggregatedResults);
-            Message aggregateResultMsg(uuid, IpAddress(host, port),
-                                       aggregatePayload);
-
-            cout << "Waiting for connection back to requester" << endl;
-            // busy wait until connection is established
-            while (client->setupConn(reqHost, reqPort, "tcp") == -1) {
-                sleep(5);
-            }
-
-            client->sendRequest(aggregateResultMsg.serialize().c_str());
+            leaderHandleTaskRequest(requesterIpAddr);
         } else {
-            // if this is a follower, send the result to the leader peer
-            cout << "Waiting for connection back to leader" << endl;
-            // get the ip from the bootstrap server
-            // ------------------ hard code for now ------------------
-            IpAddress leaderIp =
-                task->getAssignedWorkers()[task->getLeaderUuid()];
-            const char* leaderHost = leaderIp.host.c_str();
-            const char* leaderPort = to_string(leaderIp.port).c_str();
-            // busy wait until connection is established with the leader
-            while (client->setupConn(leaderHost, leaderPort, "tcp") == -1) {
-                sleep(5);
-            }
-            workloadThread.join();
-            client->sendRequest(task->serialize().c_str());
+            followerHandleTaskRequest();
+        }
+    }
+}
+
+void Provider::leaderHandleTaskRequest(const IpAddress& requesterIpAddr) {
+    // Run processWorkload() in a separate thread
+    thread workloadThread(&Provider::processWorkload, this);
+
+    vector<vector<int>> followerData{};
+    while (followerData.size() < task->getAssignedWorkers().size() - 1) {
+        cout << "\nWaiting for follower peer to connect..." << endl;
+        while (!server->acceptConn());
+
+        // get data from followers and aggregate
+        string followerMsgStr = server->receiveFromConn();
+        Message followerMsg;
+        followerMsg.deserialize(followerMsgStr);
+        shared_ptr<Payload> followerPayload = followerMsg.getPayload();
+
+        if (followerPayload->getType() != Payload::Type::TASK_RESPONSE) {
+            continue;
         }
 
+        shared_ptr<TaskResponse> taskResp =
+            static_pointer_cast<TaskResponse>(followerPayload);
+
+        // append to followerData
+        followerData.push_back(taskResp->getTrainingData());
+        server->replyToConn("Received follower result.");
+        server->closeConn();
     }
+
+    cout << endl;
+    workloadThread.join();
+    TaskResponse aggregatedResults = aggregateResults(followerData);
+
+    // Send results back to requester
+    // TODO: requester IP address could change
+    shared_ptr<TaskResponse> aggregatePayload =
+        make_shared<TaskResponse>(aggregatedResults);
+    Message aggregateResultMsg(uuid, IpAddress(host, port),
+                                aggregatePayload);
+
+    cout << "Waiting for connection back to requester" << endl;
+    // Keep trying to send results back to requester 
+    while (true) {
+        // busy wait until connection is established
+        while (client->setupConn(requesterIpAddr, "tcp") != 0) {
+            sleep(5);
+        }
+        if (client->sendMsg(aggregateResultMsg.serialize().c_str()) != 0) {
+            continue;
+        }
+
+        if (!server->acceptConn()) continue;
+
+        // receive response from requester
+        string serializedData = server->receiveFromConn();
+        server->closeConn();
+        // process this request
+        Message msg;
+        msg.deserialize(serializedData);
+        shared_ptr<Payload> payload = msg.getPayload();
+
+        if (payload->getType() == Payload::Type::ACKNOWLEDGEMENT) {
+            break;
+        }
+    }
+}
+
+void Provider::followerHandleTaskRequest() {
+    processWorkload();
+    cout << "Waiting for connection back to leader" << endl;
+    IpAddress leaderIp =
+        task->getAssignedWorkers()[task->getLeaderUuid()];
+    // busy wait until connection is established with the leader
+    while (client->setupConn(leaderIp, "tcp") == -1) {
+        sleep(5);
+    }
+    client->sendMsg(task->serialize().c_str());
 }
 
 void Provider::processWorkload() {

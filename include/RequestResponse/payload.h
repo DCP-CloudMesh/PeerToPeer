@@ -10,6 +10,7 @@ class Payload {
   public:
     enum Type {
         UNKNOWN,
+        ACKNOWLEDGEMENT,
         REGISTRATION,
         DISCOVERY_REQUEST,
         DISCOVERY_RESPONSE,
