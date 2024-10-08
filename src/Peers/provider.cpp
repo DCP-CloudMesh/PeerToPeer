@@ -1,7 +1,7 @@
 #include "../../include/Peers/provider.h"
 #include "../../include/Peers/bootstrap_node.h"
 #include "../../include/RequestResponse/message.h"
-#include "../../include/RequestResponse/generic_response.h"
+#include "../../include/RequestResponse/acknowledgement.h"
 #include "../../include/RequestResponse/registration.h"
 #include "../../include/RequestResponse/task_request.h"
 #include "../../include/utility.h"
@@ -143,12 +143,8 @@ void Provider::leaderHandleTaskRequest(const IpAddress& requesterIpAddr) {
         msg.deserialize(serializedData);
         shared_ptr<Payload> payload = msg.getPayload();
 
-        if (payload->getType() == Payload::Type::GENERIC_RESPONSE) {
-            shared_ptr<GenericResponse> gr =
-                static_pointer_cast<GenericResponse>(payload);
-            if (gr->getStatus() == GenericResponse::Status::SUCCESS) {
-                break;
-            }
+        if (payload->getType() == Payload::Type::ACKNOWLEDGEMENT) {
+            break;
         }
     }
 }

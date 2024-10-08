@@ -1,7 +1,7 @@
 #include "../../include/Peers/requester.h"
 #include "../../include/Peers/bootstrap_node.h"
 #include "../../include/RequestResponse/message.h"
-#include "../../include/RequestResponse/generic_response.h"
+#include "../../include/RequestResponse/acknowledgement.h"
 #include "../../include/RequestResponse/discovery_request.h"
 #include "../../include/RequestResponse/discovery_response.h"
 #include "../../include/utility.h"
@@ -183,8 +183,7 @@ TaskResponse Requester::getResults() {
     taskResult = std::move(*taskRespPtr); // transfer data
 
     // send success acknowledgement to provider
-    shared_ptr<GenericResponse> payload =
-        make_shared<GenericResponse>(GenericResponse::Status::SUCCESS);
+    shared_ptr<Acknowledgement> payload = make_shared<Acknowledgement>();
     Message response(uuid, IpAddress(host, port), payload);
     client->setupConn(leaderIpAddr, "tcp");
     client->sendMsg(response.serialize().c_str());
