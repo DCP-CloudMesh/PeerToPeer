@@ -32,7 +32,6 @@ cc_library(
 cc_binary(
     name = "bootstrap",
     srcs = ["main.cpp"],
-    copts = ["-std=c++20", "-Wall", "-pthread"],
     defines = ["BOOTSTRAP=1"] + local_defines,
     deps = [":src_files"],
 )
@@ -40,7 +39,6 @@ cc_binary(
 cc_binary(
     name = "provider",
     srcs = ["main.cpp"],
-    copts = ["-std=c++20", "-Wall", "-pthread"],
     defines = ["PROVIDER=1"] + local_defines,                    
     deps = [":src_files"],
 )
@@ -48,7 +46,6 @@ cc_binary(
 cc_binary(
     name = "requester",
     srcs = ["main.cpp"],
-    copts = ["-std=c++20", "-Wall", "-pthread"],
     defines = ["REQUESTER=1"] + local_defines,                    
     deps = [":src_files"],
 )
