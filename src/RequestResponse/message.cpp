@@ -3,6 +3,7 @@
 
 #include "../../include/utility.h"
 #include "../../include/RequestResponse/message.h"
+#include "../../include/RequestResponse/acknowledgement.h"
 #include "../../include/RequestResponse/registration.h"
 #include "../../include/RequestResponse/discovery_request.h"
 #include "../../include/RequestResponse/discovery_response.h"
@@ -37,7 +38,9 @@ void Message::setPayload(std::shared_ptr<Payload> payload) {
 }
 
 void Message::initializePayload(const string& payloadTypeStr) {
-    if (payloadTypeStr == "REGISTRATION") {
+    if (payloadTypeStr == "ACKNOWLEDGEMENT") {
+        payload = make_shared<Acknowledgement>();
+    } else if (payloadTypeStr == "REGISTRATION") {
         payload = make_shared<Registration>();
     } else if (payloadTypeStr == "DISCOVERY_REQUEST") {
         payload = make_shared<DiscoveryRequest>();
@@ -58,6 +61,9 @@ string Message::serialize() const {
     j["senderId"] = senderUuid;
     j["senderIpAddress"] = serializeIpAddress(senderIpAddr);
     switch(payload->getType()) {
+      case Payload::Type::ACKNOWLEDGEMENT:
+        j["payloadType"] = "ACKNOWLEDGEMENT";
+        break;
       case Payload::Type::REGISTRATION:
         j["payloadType"] = "REGISTRATION";
         break;

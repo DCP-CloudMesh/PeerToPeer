@@ -41,7 +41,7 @@ To execute, run the following commands:
 ./bazel-bin/requester [8080 [r | c]]
 ```
 `8080` is the default port, optional parameter\
-`r` is an optional parameter to request to receive the result of the computation
+`r` is an optional parameter to request to receive the result of the computation (use same port as original request execution)
 `c` is an optional parameter to request to provide the computation
 ## Clean
 
