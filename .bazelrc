@@ -1,0 +1,4 @@
+build --cxxopt=-std=c++20
+build --copt=-Wall
+build --copt=-pthread
+build --linkopt=-lpthread
